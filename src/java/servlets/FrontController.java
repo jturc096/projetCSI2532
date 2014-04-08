@@ -26,6 +26,8 @@ import javax.sql.DataSource;
 import model.beans.BeanHandler;
 import model.beans.CustomerBean;
 import model.beans.EmployeeBean;
+import model.beans.BrancheBean;
+import model.beans.AccountSupervisorBean;
 import model.db.DBHandlerSQLPool;
 
 /**
@@ -103,9 +105,7 @@ public class FrontController extends HttpServlet {
             }
         }
         else if(urlPath.equals("/loginE")) {
-            db = new DBHandlerSQLPool();
-            // BeanBase fb = new ForwardBean();
-            
+            db = new DBHandlerSQLPool();            
             String username = request.getParameter("jsp_usernameE_txt");
             String password = request.getParameter("jsp_passwordE_txt");
             int id = db.verifyLoginEmployee(conn, username, password);
@@ -119,15 +119,83 @@ public class FrontController extends HttpServlet {
             }else{
                 directedURL = "index.jsp";
             }
-
-            
-            // TA Notes:
-            // Why did we put jsp_forward in WEB-INF/ ? 
-            // JSP and Servlets in this folder cannot be accessed directly 
-            // from the user! - they must be accessed from requests generated 
-            // by the JSP and Servlets of the application 
-            // This gives more security to the application in general. 
         }
+        
+        else if (urlPath.equals("/employee_data")) {
+            db = new DBHandlerSQLPool();
+            String username = request.getParameter("jsp_usernameE_txt");
+            int id = db.verifyEmployeeData(conn, username);
+            if(id>0){
+                EmployeeBean eb = new EmployeeBean(id);
+                eb.fillEmployeeBean(conn);
+
+                request.setAttribute("employeebean", eb);
+
+                directedURL = "WEB-INF/employee_data.jsp";
+            }else{
+                directedURL = "index.jsp";
+            }
+        }      
+        
+        else if (urlPath.equals("/branche_data")) {
+            db = new DBHandlerSQLPool();
+            String brancheName = request.getParameter("jsp_brancheName_txt");
+            int id = db.getInfoBranche(conn, brancheName);
+            if(id>0){
+                BrancheBean bb = new BrancheBean(id);
+                bb.fillBrancheBean(conn);
+
+                request.setAttribute("branchebean", bb);
+
+                directedURL = "WEB-INF/branche_data.jsp";
+            }else{
+                directedURL = "index.jsp";
+            }
+        }
+        
+          else if (urlPath.equals("/accountSupervisor")) {
+            db = new DBHandlerSQLPool();
+            String tempEmployeeId = request.getParameter("jsp_employeeId_txt");
+            int employeeId = Integer.parseInt(tempEmployeeId);
+            int id = db.getInfoAccountSupervisor(conn, employeeId);
+            if(id>0){
+                AccountSupervisorBean asb = new AccountSupervisorBean(id);
+                asb.fillAccountSupervisorBean(conn);
+
+                request.setAttribute("accountsupervisorbean", asb);
+
+                directedURL = "WEB-INF/accountSupervisorData.jsp";
+            }else{
+                directedURL = "index.jsp";
+            }
+        }
+        
+        
+        
+        
+        //  I AM WORKING HERE TO VIEW INFORMATION ON A CUSTOMER FROM AN EMPLOYEE POINT OF VIEW
+        // WORKING HEREEE!!!!!
+        
+          
+          else if (urlPath.equals("/customerDataE")) {
+            db = new DBHandlerSQLPool();
+            String tempCustomerId = request.getParameter("jsp_customerId_txt");
+            int customerId = Integer.parseInt(tempCustomerId);
+            int id = db.getInformationCustomer(conn, customerId);
+            if(id>0){
+                CustomerBean cb = new CustomerBean(id);
+                cb.fillCustomerBean(conn);
+
+                request.setAttribute("customerbean", cb);
+
+                directedURL = "WEB-INF/customerData.jsp";
+            }else{
+                directedURL = "index.jsp";
+            }
+        }
+        
+        
+        
         
         RequestDispatcher dispatcher = request.getRequestDispatcher(directedURL);
         dispatcher.forward(request, response);
