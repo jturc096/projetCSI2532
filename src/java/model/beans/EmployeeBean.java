@@ -40,6 +40,10 @@ public class EmployeeBean extends BeanBase {
         this.beanId = beanCid;
     }
     
+    public EmployeeBean(String beanUsername) {
+        this.beanUsername = beanUsername;
+    }
+    
     public EmployeeBean(EmployeeBean b) { 
         this.beanId = b.beanId;
         this.beanUsername = b.beanUsername;
@@ -118,6 +122,8 @@ public class EmployeeBean extends BeanBase {
             setbeanLname(rs.getString("lname"));
             setbeanPhone(rs.getString("phone"));
             setbeanStartDate(rs.getString("start_date"));
+            setBeanPassword(rs.getString("password"));
+            setbeanUsername(rs.getString("username"));
         }
         } catch (SQLException e) { 
             System.out.println(e);

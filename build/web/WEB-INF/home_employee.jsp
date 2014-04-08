@@ -16,6 +16,28 @@
     
         <h1>Home Employee</h1>
         
+        <div id="nav">
+            <a href="index.jsp">Home</a>
+            <a href="index.jsp">Logout</a>
+
+        </div>
+        
+        <form action="employee_data" name="jsp_employee_data_E" method="get">
+            Enter a Employee Username to view information on that employee : <input type="text" name="jsp_usernameE_txt">
+            <input type="submit" value="Employee Data" name="jsp_employee_data_btm">
+        </form>
+        
+        
+        <form action="branche_data" name="jsp_branche_data_E" method="get">
+            Enter the Branche Name to view information on that branche : <input type="text" name="jsp_brancheName_txt">
+            <input type="submit" value="Branche Data" name="jsp_branche_data_btm">
+        </form>
+        
+        
+        <form action="accountSupervisor" name="jsp_account_supervisor_E" method="get">
+            Enter your Employee ID to view the accounts you supervise : <input type="text" name="jsp_employeeId_txt">
+            <input type="submit" value="Account Supervisor" name="jsp_account_supervisor_btm">
+        </form>
         
         <%-- This is how we access the bean  called - forwardbean passed in the request
             Note that the id parameter must be equal to the name of attribute name as 
@@ -39,10 +61,21 @@
             Note that you have to include the <%@ taglib .. above .. 
         --%>
         
+        <h1>Employee Information</h1>
+
+        
         <p>
-            Prenom : <% out.print(employeebean.getBeanFname());%>
+            First Name : <input type="text" name="jsp_usernameE_txt" value="<% out.print(employeebean.getBeanFname());%>">
             <br>
-            Nom de famille: <% out.print(employeebean.getBeanLname());%>                      
+            Last Name <input type="text" name="jsp_nomFamille_txt" value="<% out.print(employeebean.getBeanLname());%>">
+            <br>
+            Employee Username: <input type="text" name="jsp_employeeUsername_txt" value="<% out.print(employeebean.getBeanUsername());%>">
+            <br>            
+            Start Date: <% out.print(employeebean.getbeanStartDate());%>
+            <br>
+            Employee Id: <% out.print(employeebean.getBeanId());%> 
+            <br>
+            Employee Password: <input type="text" name="jsp_employeePassword_txt" value="<% out.print(employeebean.getBeanPassword());%>">
         </p>
 
         

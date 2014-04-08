@@ -1,5 +1,5 @@
 <%-- 
-    Document   : jsp_forward
+    Document   : jsp_login
     Created on : Mar 16, 2014, 2:07:03 PM
     Author     : ahmed
 --%>
@@ -10,17 +10,21 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Home</title>
+        <title>Employee Data</title>
     </head>
     <body>
-    
-        <h1>Home Employee</h1>
+        <div>
+            <h1>Employee Data</h1>
+        </div>
         
+                
         <div id="nav">
             <a href="index.jsp">Home</a>
             <a href="index.jsp">Logout</a>
-
         </div>
+        
+        
+        
         
         <form action="employee_data" name="jsp_employee_data_E" method="get">
             Enter a Employee Username to view information on that employee : <input type="text" name="jsp_usernameE_txt">
@@ -39,6 +43,24 @@
             <input type="submit" value="Account Supervisor" name="jsp_account_supervisor_btm">
         </form>
         
+        
+        <jsp:useBean id="employeebean" class="model.beans.EmployeeBean" scope="request"/>
+        
+        <h2>Employee Data</h2>
+        <p>
+            First Name : <% out.print(employeebean.getBeanFname());%>
+            <br>
+            Last Name : <% out.print(employeebean.getBeanLname());%>
+            <br>
+            Employee Username: <% out.print(employeebean.getBeanUsername());%>
+            <br>            
+            Start Date: <% out.print(employeebean.getbeanStartDate());%>
+            <br>
+            Employee Id: <% out.print(employeebean.getBeanId());%> 
+            </p>
+        
+
+    
         <%-- This is how we access the bean  called - forwardbean passed in the request
             Note that the id parameter must be equal to the name of attribute name as 
             defined in the request. 
@@ -47,12 +69,14 @@
             beans has a scope of request, session, application and page .. let's ignore that 
             now. 
         --%>
-        <jsp:useBean id="employeebean" class="model.beans.EmployeeBean" scope="request"/>
+        <%--<jsp:useBean id="forwardbean" class="model.beans.ForwardBean" scope="request"/>--%>
       
         
         <%-- you see the jsp:getProperty .. well, this is how you access the bean - note 
         that beanId is actually calling getBeanId(). The same can be said about beanMessage--%>
         
+        <%--<p>We received a forward bean with id = <jsp:getProperty name="forwardbean" property="beanId"/>
+            and message <jsp:getProperty name="forwardbean" property="beanMessage"/></p>
         
         
         <%-- This is how iterate over a java bean in JSP - This is in fact is JSTL 
@@ -61,22 +85,12 @@
             Note that you have to include the <%@ taglib .. above .. 
         --%>
         
-        <h1>Employee Information</h1>
-
-        
-        <p>
-            First Name : <input type="text" name="jsp_usernameE_txt" value="<% out.print(employeebean.getBeanFname());%>">
-            <br>
-            Last Name <input type="text" name="jsp_nomFamille_txt" value="<% out.print(employeebean.getBeanLname());%>">
-            <br>
-            Employee Username: <input type="text" name="jsp_employeeUsername_txt" value="<% out.print(employeebean.getBeanUsername());%>">
-            <br>            
-            Start Date: <% out.print(employeebean.getbeanStartDate());%>
-            <br>
-            Employee Id: <% out.print(employeebean.getBeanId());%> 
-            <br>
-            Employee Password: <input type="text" name="jsp_employeePassword_txt" value="<% out.print(employeebean.getBeanPassword());%>">
-        </p>
+        <%--<ul>
+            <c:forEach items="${forwardbean.beanStringList}" var="v">
+                <li>${v}</li>
+            </c:forEach>
+                      
+        </ul> --%>
 
         
         <%-- As a designer, don't use any argument not included in the bean! It is the 

@@ -154,6 +154,7 @@ public class CustomerBean extends BeanBase {
             setbeanPhone(rs.getString("phone"));
             setbeanEmail(rs.getString("email"));
             setbeanReachable(rs.getString("reachable"));
+            setbeanUsername(rs.getString("username"));
         }
         } catch (SQLException e) { 
             System.out.println(e);

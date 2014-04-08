@@ -17,6 +17,10 @@
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/loginC</url-pattern>
         <url-pattern>/loginE</url-pattern>
+        <url-pattern>/employee_data</url-pattern>
+        <url-pattern>/branche_data</url-pattern>
+        <url-pattern>/accountSupervisor</url-pattern>    
+        <url-pattern>/customerDataE</url-pattern>     
     </servlet-mapping>
     <session-config>
         <session-timeout>
