@@ -46,7 +46,7 @@ public class DataSourceLoader extends HttpServlet {
         
         System.out.println("Loading the underlying JDBC driver (PostgreSQL)");
         try { 
-            // super.init(cfg);     
+            //super.init(cfg);     
             Class.forName("org.postgresql.Driver");
             
         } catch (ClassNotFoundException e) { 
@@ -93,6 +93,10 @@ public class DataSourceLoader extends HttpServlet {
     
     }
     
+    public static DataSource getDataSource(){
+     return dataSource;   
+    }
+    
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -104,7 +108,7 @@ public class DataSourceLoader extends HttpServlet {
     @Override
     public void destroy() { 
         getServletContext ().removeAttribute (dataSourceKey); 
-        // if (dataSource != null) dataSource.close (); 
+        //if (dataSource != null) dataSource.close (); 
         super.destroy (); 
     }
     

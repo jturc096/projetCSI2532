@@ -1,7 +1,7 @@
 <%-- 
-    Document   : jsp_forward
-    Created on : Mar 16, 2014, 2:07:03 PM
-    Author     : ahmed
+    Document   : transfer_customer
+    Created on : 6-Apr-2014, 1:35:18 PM
+    Author     : Jeremy
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -73,3 +73,4 @@
     
     </body>
 </html>
+

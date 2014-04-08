@@ -81,20 +81,13 @@ public class BrancheBean extends BeanBase {
        this.beanAssets = beanAssets;
    }
    
-   public void fillBrancheBean(Connection conn) throws SQLException, ServletException {
+   public void fillBrancheBean() throws SQLException, ServletException {
         DBHandlerSQLPool d = new DBHandlerSQLPool();
-        ResultSet rs = d.fillInfoBranche(conn, beanid);
+        BrancheBean bb = d.fillInfoBranche(beanid);
         
-        try {
-            while (rs.next()) {
                 setBeanId(beanid);
-                setBeanName(rs.getString("bname"));
-                setBeanCity(rs.getString("bcity"));
-                setBeanAssets(rs.getInt("bassets"));
-            }
-            
-        } catch (SQLException e) {
-            System.out.println(e);
-        }   
+                setBeanName(bb.getBeanName());
+                setBeanCity(bb.getBeanCity());
+                setBeanAssets(bb.getBeanAssets());  
    }
 }

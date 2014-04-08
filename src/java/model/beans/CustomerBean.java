@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
+import model.beans.BeanBase;
 import model.db.DBHandlerSQLPool;
 
 /**
@@ -139,26 +140,31 @@ public class CustomerBean extends BeanBase {
         this.beanPassword = beanPassword;
     }
     
-    public void fillCustomerBean(Connection conn) throws SQLException, ServletException {
+    public void fillCustomerBean() throws SQLException, ServletException {
 
         DBHandlerSQLPool d = new DBHandlerSQLPool();
         
-        ResultSet rs = d.getInfoCust(conn, beanId);
-        try {
-        while (rs.next()) { 
+        CustomerBean cb = d.getInfoCust( beanId);
+        
             setBeanId(beanId);
-            setbeanFname(rs.getString("fname"));
-            setbeanLname(rs.getString("lname"));
-            setbeanCity(rs.getString("city"));
-            setbeanAddr(rs.getString("addr"));
-            setbeanPhone(rs.getString("phone"));
-            setbeanEmail(rs.getString("email"));
-            setbeanReachable(rs.getString("reachable"));
-            setbeanUsername(rs.getString("username"));
+            setbeanFname(cb.getBeanFname());
+            setbeanLname(cb.getBeanLname());
+            setbeanCity(cb.getBeanCity());
+            setbeanAddr(cb.getbeanAddr());
+            setbeanPhone(cb.getbeanPhone());
+            setbeanEmail(cb.getbeanEmail());
+            setbeanReachable(cb.getbeanReachable());
+        
+    }
+    
+    public boolean updateProfile() throws SQLException, ServletException{
+        DBHandlerSQLPool d = new DBHandlerSQLPool();
+        
+        if(d.updateCustomer(this)){
+            fillCustomerBean();
+            return true;
         }
-        } catch (SQLException e) { 
-            System.out.println(e);
-        }
+        return false;
     }
     
     

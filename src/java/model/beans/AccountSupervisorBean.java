@@ -77,20 +77,14 @@ public class AccountSupervisorBean {
     }
     
     
-    public void fillAccountSupervisorBean(Connection conn) throws SQLException, ServletException {
+    public void fillAccountSupervisorBean() throws SQLException, ServletException {
 
         DBHandlerSQLPool d = new DBHandlerSQLPool();
         
         // MUST CHANGE GET INFO CUST TO SOMETHING FOR THIS CLASS IN THE CLASS BDHANDLERSQLPOOL
-        ResultSet rs = d.fillInfoAccountSupervisor(conn, beanEmployeeId); // HERE!!!
-        try {
-        while (rs.next()) { 
+        AccountSupervisorBean as = d.fillInfoAccountSupervisor(beanEmployeeId); // HERE!!!
             setBeanEmployeeId(beanEmployeeId); 
-            setBeanCustomerId(rs.getInt("cid"));
-            setBeanAccount_number(rs.getInt("account_number"));
-            }
-        } catch (SQLException e) { 
-            System.out.println(e);
-        }
+            setBeanCustomerId(as.getBeanCustomerId());
+            setBeanAccount_number(as.getBeanAccount_number());
     }
 }

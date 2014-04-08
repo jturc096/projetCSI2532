@@ -110,24 +110,16 @@ public class EmployeeBean extends BeanBase {
         this.beanPassword = beanPassword;
     }
     
-    public void fillEmployeeBean(Connection conn) throws SQLException, ServletException {
+    public void fillEmployeeBean() throws SQLException, ServletException {
 
         DBHandlerSQLPool d = new DBHandlerSQLPool();
         
-        ResultSet rs = d.getInfoEmp(conn, beanId);
-        try {
-        while (rs.next()) { 
+        EmployeeBean eb = d.getInfoEmp(beanId);
             setBeanId(beanId);
-            setbeanFname(rs.getString("fname"));
-            setbeanLname(rs.getString("lname"));
-            setbeanPhone(rs.getString("phone"));
-            setbeanStartDate(rs.getString("start_date"));
-            setBeanPassword(rs.getString("password"));
-            setbeanUsername(rs.getString("username"));
-        }
-        } catch (SQLException e) { 
-            System.out.println(e);
-        }
+            setbeanFname(eb.getBeanFname());
+            setbeanLname(eb.getBeanLname());
+            setbeanPhone(eb.getbeanPhone());
+            setbeanStartDate(eb.getbeanStartDate());
     }
     
     

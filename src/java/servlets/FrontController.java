@@ -37,7 +37,6 @@ import model.db.DBHandlerSQLPool;
 public class FrontController extends HttpServlet {
     
     public static DBHandlerSQLPool db;
-    public Connection conn;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -67,38 +66,20 @@ public class FrontController extends HttpServlet {
         
         String urlPath = request.getServletPath();
         String directedURL = "WEB-INF/error.jsp";
-        
-        ServletContext context = getServletContext();
-        String key = model.db.DataSourceLoader.dataSourceKey;
-        Object object = context.getAttribute(key);
-
-        if (object == null) {
-            System.out.println("No connection pool.");
-        } else {
-            System.out.println("Yes Connection pool");
-            try {
-                DataSource pool = (DataSource) object;
-                conn = pool.getConnection();
-                
-                if (conn != null) { 
-                    System.out.println("Connection exist!");
-                }
             
-        
-
         if (urlPath.equals("/loginC")) {
-            db = new DBHandlerSQLPool();
+            DBHandlerSQLPool db = new DBHandlerSQLPool();
             // BeanBase fb = new ForwardBean();
             
             String username = request.getParameter("jsp_usernameC_txt");
             String password = request.getParameter("jsp_passwordC_txt");
-            int id = db.verifyLoginCustomer(conn, username, password);
+            int id = db.verifyLoginCustomer(username, password);
             if(id>0){
                 CustomerBean cb = new CustomerBean(id);
-                cb.fillCustomerBean(conn);
+                cb.fillCustomerBean();
 
                 request.setAttribute("customerbean", cb);
-
+                request.setAttribute("msg", "");
                 directedURL = "WEB-INF/home_customer.jsp";
             }else{
                 directedURL = "index.jsp";
@@ -108,10 +89,10 @@ public class FrontController extends HttpServlet {
             db = new DBHandlerSQLPool();            
             String username = request.getParameter("jsp_usernameE_txt");
             String password = request.getParameter("jsp_passwordE_txt");
-            int id = db.verifyLoginEmployee(conn, username, password);
+            int id = db.verifyLoginEmployee(username, password);
             if(id>0){
                 EmployeeBean eb = new EmployeeBean(id);
-                eb.fillEmployeeBean(conn);
+                eb.fillEmployeeBean();
 
                 request.setAttribute("employeebean", eb);
 
@@ -124,10 +105,10 @@ public class FrontController extends HttpServlet {
         else if (urlPath.equals("/employee_data")) {
             db = new DBHandlerSQLPool();
             String username = request.getParameter("jsp_usernameE_txt");
-            int id = db.verifyEmployeeData(conn, username);
+            int id = db.verifyEmployeeData(username);
             if(id>0){
                 EmployeeBean eb = new EmployeeBean(id);
-                eb.fillEmployeeBean(conn);
+                eb.fillEmployeeBean();
 
                 request.setAttribute("employeebean", eb);
 
@@ -140,10 +121,10 @@ public class FrontController extends HttpServlet {
         else if (urlPath.equals("/branche_data")) {
             db = new DBHandlerSQLPool();
             String brancheName = request.getParameter("jsp_brancheName_txt");
-            int id = db.getInfoBranche(conn, brancheName);
+            int id = db.getInfoBranche(brancheName);
             if(id>0){
                 BrancheBean bb = new BrancheBean(id);
-                bb.fillBrancheBean(conn);
+                bb.fillBrancheBean();
 
                 request.setAttribute("branchebean", bb);
 
@@ -157,10 +138,10 @@ public class FrontController extends HttpServlet {
             db = new DBHandlerSQLPool();
             String tempEmployeeId = request.getParameter("jsp_employeeId_txt");
             int employeeId = Integer.parseInt(tempEmployeeId);
-            int id = db.getInfoAccountSupervisor(conn, employeeId);
+            int id = db.getInfoAccountSupervisor(employeeId);
             if(id>0){
                 AccountSupervisorBean asb = new AccountSupervisorBean(id);
-                asb.fillAccountSupervisorBean(conn);
+                asb.fillAccountSupervisorBean();
 
                 request.setAttribute("accountsupervisorbean", asb);
 
@@ -181,10 +162,10 @@ public class FrontController extends HttpServlet {
             db = new DBHandlerSQLPool();
             String tempCustomerId = request.getParameter("jsp_customerId_txt");
             int customerId = Integer.parseInt(tempCustomerId);
-            int id = db.getInformationCustomer(conn, customerId);
+            int id = db.getInformationCustomer(customerId);
             if(id>0){
                 CustomerBean cb = new CustomerBean(id);
-                cb.fillCustomerBean(conn);
+                cb.fillCustomerBean();
 
                 request.setAttribute("customerbean", cb);
 
@@ -192,6 +173,41 @@ public class FrontController extends HttpServlet {
             }else{
                 directedURL = "index.jsp";
             }
+        }else if(urlPath.equals("/updateC")) {
+            DBHandlerSQLPool db = new DBHandlerSQLPool();
+            // BeanBase fb = new ForwardBean();
+            String id = request.getParameter("jsp_idC_hid");
+            String ville = request.getParameter("jsp_cityC_txt");
+            String adr = request.getParameter("jsp_adresseC_txt");
+            String tel = request.getParameter("jsp_phoneC_txt");
+            String email = request.getParameter("jsp_emailC_txt");
+            String reach = request.getParameter("jsp_reachableC_txt");
+            int cid = Integer.parseInt(id);
+            CustomerBean cb = new CustomerBean(cid);
+            cb.fillCustomerBean();
+            cb.setbeanAddr(adr);
+            cb.setbeanCity(ville);
+            cb.setbeanPhone(tel);
+            cb.setbeanEmail(email);
+            cb.setbeanReachable(reach);
+            String msg = "";
+            if(cb.updateProfile()){
+                msg="Update Successful";
+                
+            }else{
+                msg="Update Failed";
+            }
+            directedURL = "WEB-INF/home_customer.jsp";
+            request.setAttribute("customerbean", cb);
+            request.setAttribute("msg", msg);
+
+            
+            // TA Notes:
+            // Why did we put jsp_forward in WEB-INF/ ? 
+            // JSP and Servlets in this folder cannot be accessed directly 
+            // from the user! - they must be accessed from requests generated 
+            // by the JSP and Servlets of the application 
+            // This gives more security to the application in general. 
         }
         
         
@@ -199,20 +215,10 @@ public class FrontController extends HttpServlet {
         
         RequestDispatcher dispatcher = request.getRequestDispatcher(directedURL);
         dispatcher.forward(request, response);
-            } catch (Exception e) {
-                  System.out.println("Excption caused probably by connection");
-                  e.printStackTrace();
-            }finally {
-                try {
-                    if (conn != null) {
-                        conn.close();
-                    }
-                } catch (Exception e) {
-                }
-            }
-        }
+            
+}
 
-    }
+    
 
     
                    // TA Notes:

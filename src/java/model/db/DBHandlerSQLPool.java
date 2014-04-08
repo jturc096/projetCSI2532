@@ -7,6 +7,7 @@ package model.db;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +21,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import model.beans.AccountSupervisorBean;
+import model.beans.BrancheBean;
 import model.beans.CustomerBean;
+import model.beans.EmployeeBean;
 
 /**
  *
@@ -28,172 +32,374 @@ import model.beans.CustomerBean;
  */
 public class DBHandlerSQLPool extends HttpServlet{
 
-    
-    public int verifyLoginCustomer(Connection conn,String usr, String pwd) throws SQLException { 
-        
-        
-        ResultSet rs = null;
+    private static DataSource pool;
+    public Connection getConnection() throws SQLException {
         try {
-            
-            String query = "Select cid FROM customer WHERE usr='"+usr+"' AND psw='"+pwd+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);
-   
-            rs  = stmt.executeQuery();
-            rs.next();
-            int result = rs.getInt(1);
-            if(result > 0){
-                return result;
+            Class.forName("org.postgresql.Driver");
+            System.out.println("Driver is loaded .. ");
+	} catch (ClassNotFoundException e) {
+        	System.err.println("Failed to load the driver");
+		e.printStackTrace();
+		System.exit(-1);
+	}
+        String url = "jdbc:postgresql://web0.site.uottawa.ca:15432/gston006"; 
+        Connection conn = null;
+	try {
+            conn = DriverManager.getConnection(url, "gston006", "G5621$gab");
+            System.out.println("Connection is open ..");
+	} catch (SQLException e) {
+            e.printStackTrace();
+	}
+
+	return conn; 
+    }
+    public Connection getPoolConnection() throws SQLException{
+        if(pool == null){
+              pool = DataSourceLoader.getDataSource();
+        }
+        Connection conn = null;
+
+        if (pool == null) {
+            System.out.println("No connection pool.");
+        } else {
+            System.out.println("Yes Connection pool");
+            try {
+                conn = pool.getConnection();
+                
+                if (conn != null) {
+                    System.out.println("Connection exist!");
+                    return conn;
+                }
+            } catch (Exception e) {
+                System.out.println("Excption caused probably by connection");
+                e.printStackTrace();
             }
-            
-            // rs = stmt.executeQuery("SELECT name FROM category");
-            
-        } catch (SQLException e) { 
-            System.out.println(e);
         }
-        return 0; 
+        return null;
     }
     
-    public ResultSet getInfoCust(Connection conn,int id) throws SQLException{
-        
-        ResultSet rs = null;
-        try {
+    //Customer
+    
+    public int verifyLoginCustomer(String usr, String pwd) throws SQLException { 
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        int result = 0;
+        if(conn!=null){
+            ResultSet rs = null;
+            try {
             
-            String query = "Select * FROM customer WHERE cid =" + id;
-            PreparedStatement stmt = conn.prepareStatement(query);
+                String query = "Select cid FROM customer WHERE usr='"+usr+"' AND psw='"+pwd+"'";
+                stmt = conn.prepareStatement(query);
    
-            rs  = stmt.executeQuery();
+                rs  = stmt.executeQuery();
+                rs.next();
+                result = rs.getInt(1);
             
-            // rs = stmt.executeQuery("SELECT name FROM category");
-            
-        } catch (SQLException e) { 
-            System.out.println(e);
+            } catch (SQLException e) { 
+                System.out.println(e);
+            }finally{
+                try {
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
         }
-        return rs; 
+        return result; 
+    }
+    
+    public CustomerBean getInfoCust(int id) throws SQLException{
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        CustomerBean cb = new CustomerBean();
+        if(conn != null){
+            try {
+            
+                String query = "Select * FROM customer WHERE cid =" + id;
+                stmt = conn.prepareStatement(query);
+   
+                rs  = stmt.executeQuery();
+                
+                while (rs.next()) { 
+                    cb.setBeanId(id);
+                    cb.setbeanFname(rs.getString("fname"));
+                    cb.setbeanLname(rs.getString("lname"));
+                    cb.setbeanCity(rs.getString("city"));
+                    cb.setbeanAddr(rs.getString("addr"));
+                    cb.setbeanPhone(rs.getString("phone"));
+                    cb.setbeanEmail(rs.getString("email"));
+                    cb.setbeanReachable(rs.getString("reachable"));
+                }    
+                // rs = stmt.executeQuery("SELECT name FROM category");
+            
+                } catch (SQLException e) { 
+                    System.out.println(e);
+                }finally{
+                try {
+                    if(rs != null){
+                    rs.close();
+                    }
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        
+        return cb; 
         
     }
     
-    public int verifyLoginEmployee(Connection conn,String usr, String pwd) throws SQLException { 
-        
-        
+    public boolean updateCustomer(CustomerBean cb) throws SQLException { 
+        Connection conn = getConnection();
+        Boolean retour = false;
+        PreparedStatement prest = null;
+        if(conn != null){  
+            try{    
+                String query = "UPDATE customer" +
+                    " SET city=?, addr=?, phone=?, email=?, reachable=?" +
+                    " WHERE cid=?;";
+                prest = conn.prepareStatement(query);
+                prest.setString(1,cb.getBeanCity());
+                prest.setString(2,cb.getbeanAddr());
+                prest.setString(3,cb.getbeanPhone());
+                prest.setString(4,cb.getbeanEmail());
+                prest.setString(5,cb.getbeanReachable());
+                prest.setInt(6,cb.getBeanId());
+    
+                prest.executeUpdate();
+                retour = true;
+            }catch (SQLException s){
+                retour = false;
+            }finally{
+                try {
+                    if(prest != null){
+                    prest.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        return retour;
+    }
+    
+    public int verifyLoginEmployee(String usr, String pwd) throws SQLException { 
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        int result = 0;
+        if(conn!=null){
         ResultSet rs = null;
         try {
             
             String query = "Select eid FROM employee WHERE username='"+usr+"' AND password='"+pwd+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
    
             rs  = stmt.executeQuery();
             rs.next();
-            int result = rs.getInt(1);
-            if(result > 0){
-                return result;
-            }
+            result = rs.getInt(1);
             
             // rs = stmt.executeQuery("SELECT name FROM category");
             
         } catch (SQLException e) { 
             System.out.println(e);
+        }finally{
+                try {
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
         }
-        return 0; 
+        return result; 
     }
     
-    public int verifyEmployeeData(Connection conn,String usr) throws SQLException { 
+    public int verifyEmployeeData(String usr) throws SQLException { 
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        int result = 0;
+        if(conn!=null){
         ResultSet rs = null;
         try {            
             String query = "Select eid FROM employee WHERE username='"+usr+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
    
             rs  = stmt.executeQuery();
             rs.next();
-            int result = rs.getInt(1);
-            if(result > 0){
-                return result;
-            }            
+            result = rs.getInt(1);           
         } catch (SQLException e) { 
             System.out.println(e);
+        }finally{
+                try {
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
         }
-        return 0; 
+        return result; 
     }
     
     
     
-    public ResultSet getInfoEmp(Connection conn,int id) throws SQLException{
-        
+    public EmployeeBean getInfoEmp(int id) throws SQLException{
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
         ResultSet rs = null;
-        try {
+        EmployeeBean eb = new EmployeeBean();
+        if(conn != null){
+            try {
             
-            String query = "Select * FROM employee WHERE eid =" + id;
-            PreparedStatement stmt = conn.prepareStatement(query);
+                String query = "Select * FROM employee WHERE eid =" + id;
+                stmt = conn.prepareStatement(query);
    
-            rs  = stmt.executeQuery();
+                rs  = stmt.executeQuery();
+                
+                while (rs.next()) { 
+                    eb.setBeanId(id);
+                    eb.setbeanFname(rs.getString("fname"));
+                    eb.setbeanLname(rs.getString("lname"));
+                    eb.setbeanPhone(rs.getString("phone"));
+                    eb.setbeanStartDate(rs.getString("start_date"));
+                }    
+                // rs = stmt.executeQuery("SELECT name FROM category");
             
-            // rs = stmt.executeQuery("SELECT name FROM category");
-            
-        } catch (SQLException e) { 
-            System.out.println(e);
+                } catch (SQLException e) { 
+                    System.out.println(e);
+                }finally{
+                try {
+                    if(rs != null){
+                    rs.close();
+                    }
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
         }
-        return rs;        
+        return eb; 
+        
     }
     
-    // FOR FRONTCONTROLLER 
-    
-    public int getInfoBranche(Connection conn, String brancheName) {
+    public int getInfoBranche(String brancheName) throws SQLException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
         ResultSet rs = null;
+        int result = 0;
+        if(conn!=null){
         try {            
             String query = "SELECT * FROM branche WHERE bname = '"+brancheName+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);   
+            stmt = conn.prepareStatement(query);   
             rs  = stmt.executeQuery();
             rs.next();
-            int result = rs.getInt(1);
-            if(result > 0){
-                return result;
-            }           
+            result = rs.getInt(1);         
         } catch (SQLException e) { 
             System.out.println(e);
+        }finally{
+                try {
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        
         }
-        return 0; 
+        return result; 
     }
-    
     
     // FOR FRONT CONTROLLER FOR ACCOUNT SUPERVISOR BEAN FILLING TIME!!!
     
     
     
-    public int getInfoAccountSupervisor(Connection conn, int eid) {
+    public int getInfoAccountSupervisor(int eid) throws SQLException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        int result = 0;
+        if(conn!=null){
         ResultSet rs = null;
         try {            
             String query = "SELECT * FROM Account_supervisor WHERE eid = '"+eid+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);   
+            stmt = conn.prepareStatement(query);   
             rs  = stmt.executeQuery();
             rs.next();
-            int result = rs.getInt(1);
-            if(result > 0){
-                return result;
-            }           
+            result = rs.getInt(1);        
         } catch (SQLException e) { 
             System.out.println(e);
+        }finally{
+                try {
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        
         }
-        return 0; 
+        return result; 
     }
     
     
     
     // method from front controller
     
-    public int getInformationCustomer(Connection conn, int cid) {
+    public int getInformationCustomer(int cid) throws SQLException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        int result = 0;
+        if(conn!=null){
         ResultSet rs = null;
         try {            
             String query = "SELECT * FROM Customer WHERE cid = '"+cid+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);   
+            stmt = conn.prepareStatement(query);   
             rs  = stmt.executeQuery();
             rs.next();
-            int result = rs.getInt(1);
-            if(result > 0){
-                return result;
-            }           
+            result = rs.getInt(1);          
         } catch (SQLException e) { 
             System.out.println(e);
+        }finally{
+                try {
+                    if(stmt != null){
+                    stmt.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        
         }
-        return 0; 
+        return result; 
     }
     
     
@@ -209,38 +415,83 @@ public class DBHandlerSQLPool extends HttpServlet{
     // FOR BRANCHEBEAN CLASS, FOR METHOD FILL BRANCHE BEAN()
     
     
-        public ResultSet fillInfoBranche(Connection conn, int beanid) throws SQLException {
-        
+        public BrancheBean fillInfoBranche(int beanid) throws SQLException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
         ResultSet rs = null;
+        BrancheBean bb = new BrancheBean();
+        if(conn != null){
         try {            
             String query = "Select * FROM branche WHERE bid = '"+beanid+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query);
    
             rs  = stmt.executeQuery();
-            
+            while (rs.next()) { 
+                    bb.setBeanId(beanid);
+                    bb.setBeanAssets(rs.getInt("bassets"));
+                    bb.setBeanCity(rs.getString("bcity"));
+                    bb.setBeanName(rs.getString("bname"));
+            }  
             // rs = stmt.executeQuery("SELECT name FROM category");
             
-        } catch (SQLException e) { 
-            System.out.println(e);
+            } catch (SQLException e) { 
+                System.out.println(e);
+            }finally{
+                try {
+                        if(rs != null){
+                            rs.close();
+                        }
+                        if(stmt != null){
+                            stmt.close();
+                        }
+                        if(conn != null){
+                            conn.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+            return bb;        
         }
-        return rs;        
-    }
     
         
         
         
         // FILL INFO ACCOUNT SUSERVISOR IN CLASS ACCOUNTSUPERVISORBEAN
         
-        public ResultSet fillInfoAccountSupervisor(Connection conn, int employeeId) throws SQLException{        
+        public AccountSupervisorBean fillInfoAccountSupervisor(int employeeId) throws SQLException{        
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
         ResultSet rs = null;
+        AccountSupervisorBean ab = new AccountSupervisorBean();
+        if(conn != null){
         try {            
             String query = "Select * FROM Account_supervisor WHERE eid = '"+employeeId+"'";
-            PreparedStatement stmt = conn.prepareStatement(query);   
-            rs  = stmt.executeQuery();           
+            stmt = conn.prepareStatement(query);   
+            rs  = stmt.executeQuery(); 
+            while (rs.next()) { 
+                    ab.setBeanAccount_number(rs.getInt("account_number"));
+                    ab.setBeanCustomerId(rs.getInt("cid"));
+                    ab.setBeanEmployeeId(rs.getInt("eid"));
+            }  
         } catch (SQLException e) { 
             System.out.println(e);
-        }
-        return rs;        
+        }finally{
+                try {
+                        if(rs != null){
+                            rs.close();
+                        }
+                        if(stmt != null){
+                            stmt.close();
+                        }
+                        if(conn != null){
+                            conn.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        return ab;        
     }
         
         
