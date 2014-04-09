@@ -114,14 +114,24 @@ public class EmployeeBean extends BeanBase {
 
         DBHandlerSQLPool d = new DBHandlerSQLPool();
         
+        
         EmployeeBean eb = d.getInfoEmp(beanId);
-            setBeanId(beanId);
-            setbeanFname(eb.getBeanFname());
-            setbeanLname(eb.getBeanLname());
-            setbeanPhone(eb.getbeanPhone());
-            setbeanStartDate(eb.getbeanStartDate());
+        setBeanId(beanId);
+        setbeanFname(eb.getBeanFname());
+        setbeanLname(eb.getBeanLname());
+        setbeanPhone(eb.getbeanPhone());
+        setbeanStartDate(eb.getbeanStartDate());
+        setbeanUsername(eb.getBeanUsername());
+        setBeanPassword(eb.getBeanPassword());
     }
     
     
-    
+    public boolean updateProfile() throws SQLException, ServletException{
+        DBHandlerSQLPool d = new DBHandlerSQLPool();
+        if(d.updateEmployee(this)){
+            fillEmployeeBean();
+            return true;
+        }
+        return false;
+    }
 }

@@ -14,6 +14,11 @@
     <body>
         <h1>Customer Data</h1>
         
+        <div id="nav">
+            <a href="index.jsp">Home</a>
+            <a href="index.jsp">Logout</a>
+        </div>
+        
         
         <form action="employee_data" name="jsp_employee_data_E" method="get">
             Enter a Employee Username to view information on that employee : <input type="text" name="jsp_usernameE_txt">

@@ -19,7 +19,6 @@
         <div id="nav">
             <a href="index.jsp">Home</a>
             <a href="index.jsp">Logout</a>
-
         </div>
         
         <form action="employee_data" name="jsp_employee_data_E" method="get">
@@ -29,7 +28,7 @@
         
         
         <form action="branche_data" name="jsp_branche_data_E" method="get">
-            Enter the Branche Name to view information on that branche : <input type="text" name="jsp_brancheName_txt">
+            Enter the Branch Name to view information on that branch : <input type="text" name="jsp_brancheName_txt">
             <input type="submit" value="Branche Data" name="jsp_branche_data_btm">
         </form>
         
@@ -60,24 +59,29 @@
             
             Note that you have to include the <%@ taglib .. above .. 
         --%>
-        
+        <div>
         <h1>Employee Information</h1>
-
-        
-        <p>
-            First Name : <input type="text" name="jsp_usernameE_txt" value="<% out.print(employeebean.getBeanFname());%>">
+        <h3><%out.print(request.getAttribute("message").toString());%></h3>
+        <form action="updateE" name="jsp_update_E" method="get">
+        <input type="hidden" name="jsp_eid_hid" value="<% out.print(employeebean.getBeanId());%>">
+            First Name : <input type="text" name="jsp_firstNameE_txt" value="<% out.print(employeebean.getBeanFname());%>">
             <br>
-            Last Name <input type="text" name="jsp_nomFamille_txt" value="<% out.print(employeebean.getBeanLname());%>">
+            Last Name : <input type="text" name="jsp_nomFamille_txt" value="<% out.print(employeebean.getBeanLname());%>">
             <br>
-            Employee Username: <input type="text" name="jsp_employeeUsername_txt" value="<% out.print(employeebean.getBeanUsername());%>">
+            Phone Number : <input type="text" name="jsp_phoneNumber_txt" value="<% out.print(employeebean.getbeanPhone());%>">
+            <br>
+            Employee Username : <input type="text" name="jsp_employeeUsername_txt" value="<% out.print(employeebean.getBeanUsername());%>">
             <br>            
-            Start Date: <% out.print(employeebean.getbeanStartDate());%>
+            Start Date : <% out.print(employeebean.getbeanStartDate());%>
             <br>
-            Employee Id: <% out.print(employeebean.getBeanId());%> 
+            Employee Id : <% out.print(employeebean.getBeanId());%> 
             <br>
-            Employee Password: <input type="text" name="jsp_employeePassword_txt" value="<% out.print(employeebean.getBeanPassword());%>">
-        </p>
-
+            Employee Password : <input type="text" name="jsp_employeePassword_txt" value="<% out.print(employeebean.getBeanPassword());%>">
+            <br>
+            <input type="submit" value="Update" name="jsp_updateE_btm">
+            </form>
+</div>
+        
         
         <%-- As a designer, don't use any argument not included in the bean! It is the 
         job of the Controller to make sure that it include everything you need! 

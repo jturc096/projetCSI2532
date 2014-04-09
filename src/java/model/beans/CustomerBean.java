@@ -154,6 +154,7 @@ public class CustomerBean extends BeanBase {
             setbeanPhone(cb.getbeanPhone());
             setbeanEmail(cb.getbeanEmail());
             setbeanReachable(cb.getbeanReachable());
+            setbeanUsername(cb.getBeanUsername());
         
     }
     
@@ -165,8 +166,5 @@ public class CustomerBean extends BeanBase {
             return true;
         }
         return false;
-    }
-    
-    
-    
+    }  
 }
