@@ -21,7 +21,9 @@
         <url-pattern>/branche_data</url-pattern>
         <url-pattern>/accountSupervisor</url-pattern>    
         <url-pattern>/customerDataE</url-pattern>
-        <url-pattern>/updateC</url-pattern>     
+        <url-pattern>/updateC</url-pattern>
+        <url-pattern>/updateE</url-pattern>
+
     </servlet-mapping>
     <session-config>
         <session-timeout>

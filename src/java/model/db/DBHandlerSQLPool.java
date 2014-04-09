@@ -50,7 +50,6 @@ public class DBHandlerSQLPool extends HttpServlet{
 	} catch (SQLException e) {
             e.printStackTrace();
 	}
-
 	return conn; 
     }
     public Connection getPoolConnection() throws SQLException{
@@ -87,7 +86,6 @@ public class DBHandlerSQLPool extends HttpServlet{
         if(conn!=null){
             ResultSet rs = null;
             try {
-            
                 String query = "Select cid FROM customer WHERE usr='"+usr+"' AND psw='"+pwd+"'";
                 stmt = conn.prepareStatement(query);
    
@@ -118,8 +116,7 @@ public class DBHandlerSQLPool extends HttpServlet{
         ResultSet rs = null;
         CustomerBean cb = new CustomerBean();
         if(conn != null){
-            try {
-            
+            try {            
                 String query = "Select * FROM customer WHERE cid =" + id;
                 stmt = conn.prepareStatement(query);
    
@@ -134,9 +131,8 @@ public class DBHandlerSQLPool extends HttpServlet{
                     cb.setbeanPhone(rs.getString("phone"));
                     cb.setbeanEmail(rs.getString("email"));
                     cb.setbeanReachable(rs.getString("reachable"));
+                    cb.setbeanUsername(rs.getString("usr"));
                 }    
-                // rs = stmt.executeQuery("SELECT name FROM category");
-            
                 } catch (SQLException e) { 
                     System.out.println(e);
                 }finally{
@@ -153,10 +149,8 @@ public class DBHandlerSQLPool extends HttpServlet{
                 } catch (Exception e) {
                 }
             }
-        }
-        
-        return cb; 
-        
+        }       
+        return cb;      
     }
     
     public boolean updateCustomer(CustomerBean cb) throws SQLException { 
@@ -195,6 +189,56 @@ public class DBHandlerSQLPool extends HttpServlet{
         return retour;
     }
     
+    
+    // WORKING HERE FOR THE UPDATE EMPLOYEE
+    
+    
+    
+    public boolean updateEmployee(EmployeeBean eb) throws SQLException { 
+        Connection conn = getConnection();
+        Boolean retour = false;
+        PreparedStatement prest = null;
+        if(conn != null){  
+            try{    
+                String query = "UPDATE Employee" +
+                    " SET fname=?, lname=?, phone=?, password=?" +
+                    " WHERE eid=?;";
+                prest = conn.prepareStatement(query);
+                prest.setString(1,eb.getBeanFname());
+                prest.setString(2,eb.getBeanLname());
+                prest.setString(3,eb.getbeanPhone());
+                prest.setString(4,eb.getBeanPassword());
+                prest.setInt(5,eb.getBeanId());
+    
+                prest.executeUpdate();
+                retour = true;
+            }catch (SQLException s){
+                retour = false;
+            }finally{
+                try {
+                    if(prest != null){
+                    prest.close();
+                    }
+                    if(conn != null){
+                        conn.close();
+                    }
+                } catch (Exception e) {
+                }
+            }
+        }
+        return retour;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public int verifyLoginEmployee(String usr, String pwd) throws SQLException { 
         Connection conn = getConnection();
         PreparedStatement stmt = null;
@@ -203,15 +247,12 @@ public class DBHandlerSQLPool extends HttpServlet{
         ResultSet rs = null;
         try {
             
-            String query = "Select eid FROM employee WHERE username='"+usr+"' AND password='"+pwd+"'";
+            String query = "Select * FROM employee WHERE username='"+usr+"' AND password='"+pwd+"'";
             stmt = conn.prepareStatement(query);
    
             rs  = stmt.executeQuery();
             rs.next();
-            result = rs.getInt(1);
-            
-            // rs = stmt.executeQuery("SELECT name FROM category");
-            
+            result = rs.getInt(1);           
         } catch (SQLException e) { 
             System.out.println(e);
         }finally{
@@ -236,7 +277,7 @@ public class DBHandlerSQLPool extends HttpServlet{
         if(conn!=null){
         ResultSet rs = null;
         try {            
-            String query = "Select eid FROM employee WHERE username='"+usr+"'";
+            String query = "Select * FROM employee WHERE username='"+usr+"'";
             stmt = conn.prepareStatement(query);
    
             rs  = stmt.executeQuery();
@@ -257,9 +298,7 @@ public class DBHandlerSQLPool extends HttpServlet{
             }
         }
         return result; 
-    }
-    
-    
+    } 
     
     public EmployeeBean getInfoEmp(int id) throws SQLException{
         Connection conn = getConnection();
@@ -280,9 +319,10 @@ public class DBHandlerSQLPool extends HttpServlet{
                     eb.setbeanLname(rs.getString("lname"));
                     eb.setbeanPhone(rs.getString("phone"));
                     eb.setbeanStartDate(rs.getString("start_date"));
+                    eb.setbeanUsername(rs.getString("username"));
+                    eb.setBeanPassword(rs.getString("password"));
                 }    
-                // rs = stmt.executeQuery("SELECT name FROM category");
-            
+        
                 } catch (SQLException e) { 
                     System.out.println(e);
                 }finally{
@@ -300,8 +340,7 @@ public class DBHandlerSQLPool extends HttpServlet{
                 }
             }
         }
-        return eb; 
-        
+        return eb;        
     }
     
     public int getInfoBranche(String brancheName) throws SQLException {
@@ -334,10 +373,6 @@ public class DBHandlerSQLPool extends HttpServlet{
         return result; 
     }
     
-    // FOR FRONT CONTROLLER FOR ACCOUNT SUPERVISOR BEAN FILLING TIME!!!
-    
-    
-    
     public int getInfoAccountSupervisor(int eid) throws SQLException {
         Connection conn = getConnection();
         PreparedStatement stmt = null;
@@ -367,11 +402,7 @@ public class DBHandlerSQLPool extends HttpServlet{
         }
         return result; 
     }
-    
-    
-    
-    // method from front controller
-    
+  
     public int getInformationCustomer(int cid) throws SQLException {
         Connection conn = getConnection();
         PreparedStatement stmt = null;
@@ -402,20 +433,7 @@ public class DBHandlerSQLPool extends HttpServlet{
         return result; 
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    // FOR BRANCHEBEAN CLASS, FOR METHOD FILL BRANCHE BEAN()
-    
-    
-        public BrancheBean fillInfoBranche(int beanid) throws SQLException {
+    public BrancheBean fillInfoBranche(int beanid) throws SQLException {
         Connection conn = getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -453,13 +471,7 @@ public class DBHandlerSQLPool extends HttpServlet{
             }
             return bb;        
         }
-    
-        
-        
-        
-        // FILL INFO ACCOUNT SUSERVISOR IN CLASS ACCOUNTSUPERVISORBEAN
-        
-        public AccountSupervisorBean fillInfoAccountSupervisor(int employeeId) throws SQLException{        
+    public AccountSupervisorBean fillInfoAccountSupervisor(int employeeId) throws SQLException{        
         Connection conn = getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -492,8 +504,5 @@ public class DBHandlerSQLPool extends HttpServlet{
                 }
             }
         return ab;        
-    }
-        
-        
-        
+    }      
 }

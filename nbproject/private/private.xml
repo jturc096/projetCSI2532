@@ -3,8 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Jeremy/Documents/GitHub/projetCSI2532/src/java/model/beans/CustomerBean.java</file>
-            <file>file:/C:/Users/Jeremy/Documents/GitHub/projetCSI2532/src/java/servlets/FrontController.java</file>
+            <file>file:/C:/Users/Gabriel%20Stone/Documents/GitHub/projetCSI2532/src/java/model/beans/EmployeeBean.java</file>
+            <file>file:/C:/Users/Gabriel%20Stone/Documents/GitHub/projetCSI2532/src/java/model/beans/CustomerBean.java</file>
+            <file>file:/C:/Users/Gabriel%20Stone/Documents/GitHub/projetCSI2532/web/WEB-INF/home_employee.jsp</file>
+            <file>file:/C:/Users/Gabriel%20Stone/Documents/GitHub/projetCSI2532/web/WEB-INF/home_customer.jsp</file>
+            <file>file:/C:/Users/Gabriel%20Stone/Documents/GitHub/projetCSI2532/src/java/model/db/DBHandlerSQLPool.java</file>
+            <file>file:/C:/Users/Gabriel%20Stone/Documents/GitHub/projetCSI2532/src/java/servlets/FrontController.java</file>
         </group>
     </open-files>
 </project-private>

@@ -68,25 +68,25 @@ public class FrontController extends HttpServlet {
         String directedURL = "WEB-INF/error.jsp";
             
         if (urlPath.equals("/loginC")) {
-            DBHandlerSQLPool db = new DBHandlerSQLPool();
-            // BeanBase fb = new ForwardBean();
-            
-            String username = request.getParameter("jsp_usernameC_txt");
-            String password = request.getParameter("jsp_passwordC_txt");
-            int id = db.verifyLoginCustomer(username, password);
-            if(id>0){
-                CustomerBean cb = new CustomerBean(id);
-                cb.fillCustomerBean();
-
-                request.setAttribute("customerbean", cb);
-                request.setAttribute("msg", "");
-                directedURL = "WEB-INF/home_customer.jsp";
-            }else{
-                directedURL = "index.jsp";
-            }
-        }
+      DBHandlerSQLPool db = new DBHandlerSQLPool();
+      // BeanBase fb = new ForwardBean();
+      
+      String username = request.getParameter("jsp_usernameC_txt");
+      String password = request.getParameter("jsp_passwordC_txt");
+      int id = db.verifyLoginCustomer(username, password);
+      if(id>0){
+        CustomerBean cb = new CustomerBean(id);
+        cb.fillCustomerBean();
+        
+        request.setAttribute("customerbean", cb);
+        request.setAttribute("msg", "");
+        directedURL = "WEB-INF/home_customer.jsp";
+      }else{
+        directedURL = "index.jsp";
+      }
+    }
         else if(urlPath.equals("/loginE")) {
-            db = new DBHandlerSQLPool();            
+            db = new DBHandlerSQLPool();
             String username = request.getParameter("jsp_usernameE_txt");
             String password = request.getParameter("jsp_passwordE_txt");
             int id = db.verifyLoginEmployee(username, password);
@@ -95,6 +95,7 @@ public class FrontController extends HttpServlet {
                 eb.fillEmployeeBean();
 
                 request.setAttribute("employeebean", eb);
+                request.setAttribute("message", "");
 
                 directedURL = "WEB-INF/home_employee.jsp";
             }else{
@@ -173,42 +174,88 @@ public class FrontController extends HttpServlet {
             }else{
                 directedURL = "index.jsp";
             }
-        }else if(urlPath.equals("/updateC")) {
+        }
+          
+          
+          else if(urlPath.equals("/updateC")) {
+      DBHandlerSQLPool db = new DBHandlerSQLPool();
+      // BeanBase fb = new ForwardBean();
+      String id = request.getParameter("jsp_idC_hid");
+      String ville = request.getParameter("jsp_cityC_txt");
+      String adr = request.getParameter("jsp_adresseC_txt");
+      String tel = request.getParameter("jsp_phoneC_txt");
+      String email = request.getParameter("jsp_emailC_txt");
+      String reach = request.getParameter("jsp_reachableC_txt");
+      int cid = Integer.parseInt(id);
+      CustomerBean cb = new CustomerBean(cid);
+      cb.fillCustomerBean();
+      cb.setbeanAddr(adr);
+      cb.setbeanCity(ville);
+      cb.setbeanPhone(tel);
+      cb.setbeanEmail(email);
+      cb.setbeanReachable(reach);
+      String msg = "";
+      if(cb.updateProfile()){
+        msg="Update Successful";
+        
+      }else{
+        msg="Update Failed";
+      }
+      directedURL = "WEB-INF/home_customer.jsp";
+      request.setAttribute("customerbean", cb);
+      request.setAttribute("msg", msg);
+      
+      
+      // TA Notes:
+      // Why did we put jsp_forward in WEB-INF/ ? 
+      // JSP and Servlets in this folder cannot be accessed directly 
+      // from the user! - they must be accessed from requests generated 
+      // by the JSP and Servlets of the application 
+      // This gives more security to the application in general. 
+    }
+        
+        
+        
+        
+        
+        // WORKING HERE FOR THE UPDATE OF EMPLOYEE INFORMATION
+        
+        
+        
+        
+        
+        else if(urlPath.equals("/updateE")) {
             DBHandlerSQLPool db = new DBHandlerSQLPool();
-            // BeanBase fb = new ForwardBean();
-            String id = request.getParameter("jsp_idC_hid");
-            String ville = request.getParameter("jsp_cityC_txt");
-            String adr = request.getParameter("jsp_adresseC_txt");
-            String tel = request.getParameter("jsp_phoneC_txt");
-            String email = request.getParameter("jsp_emailC_txt");
-            String reach = request.getParameter("jsp_reachableC_txt");
-            int cid = Integer.parseInt(id);
-            CustomerBean cb = new CustomerBean(cid);
-            cb.fillCustomerBean();
-            cb.setbeanAddr(adr);
-            cb.setbeanCity(ville);
-            cb.setbeanPhone(tel);
-            cb.setbeanEmail(email);
-            cb.setbeanReachable(reach);
-            String msg = "";
-            if(cb.updateProfile()){
-                msg="Update Successful";
+            String id = request.getParameter("jsp_eid_hid");
+            String fname = request.getParameter("jsp_firstNameE_txt");
+            String lname = request.getParameter("jsp_nomFamille_txt");
+            String phone = request.getParameter("jsp_phoneNumber_txt");
+            String password = request.getParameter("jsp_employeePassword_txt");
+            int eid = Integer.parseInt(id);
+            EmployeeBean eb = new EmployeeBean(eid);
+            eb.fillEmployeeBean();
+            eb.setbeanFname(fname);
+            eb.setbeanLname(lname);
+            eb.setbeanPhone(phone);
+            eb.setBeanPassword(password);
+            String message = "";
+            if(eb.updateProfile()){
+                message="Update Successful";
                 
             }else{
-                msg="Update Failed";
+                message="Update Failed";
             }
-            directedURL = "WEB-INF/home_customer.jsp";
-            request.setAttribute("customerbean", cb);
-            request.setAttribute("msg", msg);
-
-            
-            // TA Notes:
-            // Why did we put jsp_forward in WEB-INF/ ? 
-            // JSP and Servlets in this folder cannot be accessed directly 
-            // from the user! - they must be accessed from requests generated 
-            // by the JSP and Servlets of the application 
-            // This gives more security to the application in general. 
+            directedURL = "WEB-INF/home_employee.jsp";
+            request.setAttribute("employeebean", eb);
+            request.setAttribute("message", message);
         }
+        
+        
+        
+        
+        
+        
+        
         
         
         

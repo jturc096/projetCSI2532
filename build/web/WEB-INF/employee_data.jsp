@@ -15,16 +15,12 @@
     <body>
         <div>
             <h1>Employee Data</h1>
-        </div>
-        
+        </div>      
                 
         <div id="nav">
             <a href="index.jsp">Home</a>
             <a href="index.jsp">Logout</a>
         </div>
-        
-        
-        
         
         <form action="employee_data" name="jsp_employee_data_E" method="get">
             Enter a Employee Username to view information on that employee : <input type="text" name="jsp_usernameE_txt">
@@ -52,11 +48,13 @@
             <br>
             Last Name : <% out.print(employeebean.getBeanLname());%>
             <br>
-            Employee Username: <% out.print(employeebean.getBeanUsername());%>
-            <br>            
-            Start Date: <% out.print(employeebean.getbeanStartDate());%>
+            Phone Number : <% out.print(employeebean.getbeanPhone());%>
             <br>
-            Employee Id: <% out.print(employeebean.getBeanId());%> 
+            Employee Username : <% out.print(employeebean.getBeanUsername());%>
+            <br>            
+            Start Date : <% out.print(employeebean.getbeanStartDate());%>
+            <br>
+            Employee Id : <% out.print(employeebean.getBeanId());%> 
             </p>
         
 
