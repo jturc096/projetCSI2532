@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletResponse;
 import model.beans.BeanBase;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import model.beans.AccountActivityBean;
+import model.beans.AccountBean;
 import model.beans.BeanHandler;
 import model.beans.CustomerBean;
 import model.beans.EmployeeBean;
@@ -68,23 +70,61 @@ public class FrontController extends HttpServlet {
         String directedURL = "WEB-INF/error.jsp";
             
         if (urlPath.equals("/loginC")) {
-      DBHandlerSQLPool db = new DBHandlerSQLPool();
-      // BeanBase fb = new ForwardBean();
-      
-      String username = request.getParameter("jsp_usernameC_txt");
-      String password = request.getParameter("jsp_passwordC_txt");
-      int id = db.verifyLoginCustomer(username, password);
-      if(id>0){
-        CustomerBean cb = new CustomerBean(id);
-        cb.fillCustomerBean();
+            DBHandlerSQLPool db = new DBHandlerSQLPool();
+            // BeanBase fb = new ForwardBean();
+            int id = 0;
+            if(request.getParameter("cID") == null){
+                String username = request.getParameter("jsp_usernameC_txt");
+                String password = request.getParameter("jsp_passwordC_txt");
+                id = db.verifyLoginCustomer(username, password);
+            }else{
+                id = Integer.parseInt(request.getParameter("cID"));
+            }
+            if(id>0){
+                CustomerBean cb = new CustomerBean(id);
+                cb.fillCustomerBean();
         
-        request.setAttribute("customerbean", cb);
-        request.setAttribute("msg", "");
-        directedURL = "WEB-INF/home_customer.jsp";
-      }else{
-        directedURL = "index.jsp";
-      }
-    }
+                request.setAttribute("customerbean", cb);
+                request.setAttribute("msg", "");
+                directedURL = "WEB-INF/home_customer.jsp";
+            }else{
+                directedURL = "index.jsp";
+            }
+        }else if(urlPath.equals("/account_summary")) {
+            db = new DBHandlerSQLPool();
+            int id = Integer.parseInt(request.getParameter("cID"));
+            if(id>0){
+                CustomerBean cb = new CustomerBean(id);
+                cb.fillCustomerBean();
+                cb.fillAccounts();
+                request.setAttribute("customerbean", cb);
+                directedURL = "WEB-INF/account_summary.jsp";
+            }else{
+                directedURL = "index.jsp";
+            }
+        }
+        else if(urlPath.equals("/account_activity")) {
+            db = new DBHandlerSQLPool();
+            int id = Integer.parseInt(request.getParameter("cID"));
+            if(id>0){
+                CustomerBean cb = new CustomerBean(id);
+                cb.fillCustomerBean();
+                request.setAttribute("customerbean", cb);
+                directedURL = "WEB-INF/account_activity.jsp";
+                if(request.getParameter("jsp_accountid_txt")== null || request.getParameter("jsp_accountid_txt").equalsIgnoreCase("")){
+                    request.setAttribute("accountbean", new AccountBean());
+                }else{
+                    AccountBean ab = new AccountBean(Integer.parseInt(request.getParameter("jsp_accountid_txt")));
+                    ab.fillAccountActivity();
+                    request.setAttribute("accountbean", ab);
+                }
+            }else{
+                directedURL = "index.jsp";
+            }
+            
+        }
+        
+        
         else if(urlPath.equals("/loginE")) {
             db = new DBHandlerSQLPool();
             String username = request.getParameter("jsp_usernameE_txt");
@@ -178,32 +218,32 @@ public class FrontController extends HttpServlet {
           
           
           else if(urlPath.equals("/updateC")) {
-      DBHandlerSQLPool db = new DBHandlerSQLPool();
-      // BeanBase fb = new ForwardBean();
-      String id = request.getParameter("jsp_idC_hid");
-      String ville = request.getParameter("jsp_cityC_txt");
-      String adr = request.getParameter("jsp_adresseC_txt");
-      String tel = request.getParameter("jsp_phoneC_txt");
-      String email = request.getParameter("jsp_emailC_txt");
-      String reach = request.getParameter("jsp_reachableC_txt");
-      int cid = Integer.parseInt(id);
-      CustomerBean cb = new CustomerBean(cid);
-      cb.fillCustomerBean();
-      cb.setbeanAddr(adr);
-      cb.setbeanCity(ville);
-      cb.setbeanPhone(tel);
-      cb.setbeanEmail(email);
-      cb.setbeanReachable(reach);
-      String msg = "";
-      if(cb.updateProfile()){
-        msg="Update Successful";
+                DBHandlerSQLPool db = new DBHandlerSQLPool();
+                // BeanBase fb = new ForwardBean();
+                String id = request.getParameter("cID");
+                String ville = request.getParameter("jsp_cityC_txt");
+                String adr = request.getParameter("jsp_adresseC_txt");
+                String tel = request.getParameter("jsp_phoneC_txt");
+                String email = request.getParameter("jsp_emailC_txt");
+                String reach = request.getParameter("jsp_reachableC_txt");
+                int cid = Integer.parseInt(id);
+                CustomerBean cb = new CustomerBean(cid);
+                cb.fillCustomerBean();
+                cb.setbeanAddr(adr);
+                cb.setbeanCity(ville);
+                cb.setbeanPhone(tel);
+                cb.setbeanEmail(email);
+                cb.setbeanReachable(reach);
+                String msg = "";
+                if(cb.updateProfile()){
+                    msg="Update Successful";
         
-      }else{
-        msg="Update Failed";
-      }
-      directedURL = "WEB-INF/home_customer.jsp";
-      request.setAttribute("customerbean", cb);
-      request.setAttribute("msg", msg);
+                }else{
+                    msg="Update Failed";
+                }
+                directedURL = "WEB-INF/home_customer.jsp";
+                request.setAttribute("customerbean", cb);
+                request.setAttribute("msg", msg);
       
       
       // TA Notes:
@@ -212,7 +252,7 @@ public class FrontController extends HttpServlet {
       // from the user! - they must be accessed from requests generated 
       // by the JSP and Servlets of the application 
       // This gives more security to the application in general. 
-    }
+       }
         
         
         

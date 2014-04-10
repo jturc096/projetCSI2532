@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import model.beans.AccountActivityBean;
+import model.beans.AccountBean;
 import model.beans.AccountSupervisorBean;
 import model.beans.BrancheBean;
 import model.beans.CustomerBean;
@@ -43,14 +45,14 @@ public class DBHandlerSQLPool extends HttpServlet{
 		System.exit(-1);
 	}
         String url = "jdbc:postgresql://web0.site.uottawa.ca:15432/gston006"; 
-        Connection conn = null;
+        Connection connect = null;
 	try {
-            conn = DriverManager.getConnection(url, "gston006", "G5621$gab");
+            connect = DriverManager.getConnection(url, "gston006", "G5621$gab");
             System.out.println("Connection is open ..");
 	} catch (SQLException e) {
             e.printStackTrace();
 	}
-	return conn; 
+	return connect; 
     }
     public Connection getPoolConnection() throws SQLException{
         if(pool == null){
@@ -504,5 +506,128 @@ public class DBHandlerSQLPool extends HttpServlet{
                 }
             }
         return ab;        
-    }      
+    }
+    
+    //Customer Account
+    public ArrayList getSavingsAccount(int id) throws SQLException{
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        ArrayList abl = new ArrayList();
+        if(conn != null){
+        try {            
+            String query = "select a.account_number, a.amount from account as a, savings as s, holds as h " +
+                                "where (a.account_number = s.account_number) " +
+                                "and (a.account_number = h.account_number) " +
+                                "and (h.cid = "+id+")";
+            stmt = conn.prepareStatement(query);   
+            rs  = stmt.executeQuery(); 
+            while (rs.next()) { 
+                    AccountBean ab = new AccountBean();
+                    ab.setBeanId(rs.getInt("account_number"));
+                    ab.setBeanCid(id);
+                    ab.setbeanAmount(rs.getDouble("amount"));
+                    ab.setbeanType("Saving");
+                    abl.add(ab);
+            }  
+        } catch (SQLException e) { 
+            System.out.println(e);
+        }finally{
+                try {
+                        if(rs != null){
+                            rs.close();
+                        }
+                        if(stmt != null){
+                            stmt.close();
+                        }
+                        if(conn != null){
+                            conn.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        return abl;
+    }
+    
+    //Customer Account
+    public ArrayList getCheckingAccount(int id) throws SQLException{
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        ArrayList cbl = new ArrayList();
+        if(conn != null){
+        try {            
+            String query = "select a.account_number, a.amount from account as a, checking as c, holds as h " +
+                                "where (a.account_number = c.account_number) " +
+                                "and (a.account_number = h.account_number) " +
+                                "and (h.cid = "+id+")";
+            stmt = conn.prepareStatement(query);   
+            rs  = stmt.executeQuery(); 
+            while (rs.next()) { 
+                    AccountBean ab = new AccountBean();
+                    ab.setBeanId(rs.getInt("account_number"));
+                    ab.setBeanCid(id);
+                    ab.setbeanAmount(rs.getDouble("amount"));
+                    ab.setbeanType("Checking");
+                    cbl.add(ab);
+            }  
+        } catch (SQLException e) { 
+            System.out.println(e);
+        }finally{
+                try {
+                        if(rs != null){
+                            rs.close();
+                        }
+                        if(stmt != null){
+                            stmt.close();
+                        }
+                        if(conn != null){
+                            conn.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        return cbl;
+    }
+    
+    public ArrayList getAccountActivity(int id) throws SQLException{
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        ArrayList aal = new ArrayList();
+        if(conn != null){
+        try {            
+            String query = "SELECT * FROM account_activity WHERE account_number = "+id ;
+            stmt = conn.prepareStatement(query);   
+            rs  = stmt.executeQuery(); 
+            while (rs.next()) { 
+                    AccountActivityBean aa = new AccountActivityBean();
+                    aa.setBeanId(rs.getInt("account_number"));
+                    aa.setBeanDescription(rs.getString("description"));
+                    aa.setBeanDate(rs.getString("adate"));
+                    aa.setBeanAmount(rs.getDouble("amount"));
+                    aa.setBeanBalance(rs.getDouble("remaining_balance"));
+                    aal.add(aa);
+            }  
+        } catch (SQLException e) { 
+            System.out.println(e);
+        }finally{
+                try {
+                        if(rs != null){
+                            rs.close();
+                        }
+                        if(stmt != null){
+                            stmt.close();
+                        }
+                        if(conn != null){
+                            conn.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        return aal;
+    }
 }

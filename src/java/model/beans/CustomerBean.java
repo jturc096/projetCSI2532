@@ -29,6 +29,8 @@ public class CustomerBean extends BeanBase {
     private String beanReachable;
     private String beanUsername;
     private String beanPassword;
+    private ArrayList beanSavingAccountList;
+    private ArrayList beanCheckingAccountList;
     
     public CustomerBean() {
         beanId = 0;
@@ -41,10 +43,14 @@ public class CustomerBean extends BeanBase {
         beanPhone = "";
         beanEmail = "";
         beanReachable = "";
+        beanSavingAccountList = new ArrayList();
+        beanCheckingAccountList = new ArrayList();
     }
     
     public CustomerBean(int beanCid) {
         this.beanId = beanCid;
+        beanSavingAccountList = new ArrayList();
+        beanCheckingAccountList = new ArrayList();
     }
     
     public CustomerBean(CustomerBean b) { 
@@ -58,6 +64,8 @@ public class CustomerBean extends BeanBase {
         this.beanPhone = b.beanPhone;
         this.beanEmail = b.beanEmail;
         this.beanReachable = b.beanReachable;
+        beanSavingAccountList = b.beanSavingAccountList;
+        beanCheckingAccountList = b.beanCheckingAccountList;
     }
 
     public int getBeanId() {
@@ -140,6 +148,22 @@ public class CustomerBean extends BeanBase {
         this.beanPassword = beanPassword;
     }
     
+    public ArrayList getBeanSavingAccountList() {
+        return beanSavingAccountList;
+    }
+
+    public void setBeanSavingAccountList(ArrayList beanSavingAccountList) {
+        this.beanSavingAccountList = beanSavingAccountList;
+    }
+    
+    public ArrayList getBeanCheckingAccountList() {
+        return beanCheckingAccountList;
+    }
+
+    public void setBeanCheckingAccountList(ArrayList beanCheckingAccountList) {
+        this.beanCheckingAccountList = beanCheckingAccountList;
+    }
+    
     public void fillCustomerBean() throws SQLException, ServletException {
 
         DBHandlerSQLPool d = new DBHandlerSQLPool();
@@ -155,6 +179,8 @@ public class CustomerBean extends BeanBase {
             setbeanEmail(cb.getbeanEmail());
             setbeanReachable(cb.getbeanReachable());
             setbeanUsername(cb.getBeanUsername());
+            setBeanCheckingAccountList(cb.getBeanCheckingAccountList());
+            setBeanSavingAccountList(cb.getBeanSavingAccountList());
         
     }
     
@@ -166,5 +192,32 @@ public class CustomerBean extends BeanBase {
             return true;
         }
         return false;
-    }  
+    }
+    
+    public void fillAccounts() throws SQLException{
+        DBHandlerSQLPool d = new DBHandlerSQLPool();
+        //Savings
+        setBeanSavingAccountList(d.getSavingsAccount(beanId));
+        //Checking
+        setBeanCheckingAccountList(d.getCheckingAccount(beanId));
+    }
+    
+    public String showCheckingAccount(){
+        String retour = new String();
+        ArrayList al = getBeanCheckingAccountList();
+        for(int i = 0;i<al.size();i++){
+            retour += al.get(i).toString() + "<br>";
+        }
+        return retour;
+    }
+    
+    public String showSavingAccount(){
+        String retour = new String();
+        ArrayList al = getBeanSavingAccountList();
+        for(int i = 0;i<al.size();i++){
+            retour += al.get(i).toString() + "<br>";
+        }
+        return retour;
+    }
+    
 }

@@ -13,12 +13,23 @@
         <title>JSP Page</title>
     </head>
     <body>
-        
+        <jsp:useBean id="customerbean" class="model.beans.CustomerBean" scope="request"/>
         <div id="nav">
-            <a href="WEB-INF/home_customer.jsp">Home</a>
-            <a href="#">Account</a>
+            <a href="<c:url value="loginC">   
+                   <c:param name="cID" value="${customerbean.beanId}"/> 
+                    </c:url>  
+                ">Home</a>   
+            <a href="<c:url value="account_summary">   
+                        <c:param name="cID" value="${customerbean.beanId}"/> 
+                    </c:url>  
+                ">Account Summary</a>
+            <a href="<c:url value="account_activity">   
+                        <c:param name="cID" value="${customerbean.beanId}"/> 
+                    </c:url>  
+                ">Account Activity</a>
             <a href="#">Payments</a>
             <a href="#">Transfers</a>
+            <a href="index.jsp">Logout</a>
         </div>
         
         
@@ -30,7 +41,7 @@
             beans has a scope of request, session, application and page .. let's ignore that 
             now. 
         --%>
-        <jsp:useBean id="customerbean" class="model.beans.CustomerBean" scope="request"/>
+        
 
         
         
@@ -41,10 +52,11 @@
         --%>
         
         <div>
+            
             <h1>Home</h1>
             <h3><%out.print(request.getAttribute("msg").toString());%></h3>
             <form action="updateC" name="jsp_update_C" method="get">
-                <input type="hidden" name="jsp_idC_hid" value="<% out.print(customerbean.getBeanId());%>">
+                <input type="hidden" value="${customerbean.beanId}" name="cID">
                 Prenom : <% out.print(customerbean.getBeanFname());%>
                 <br>
                 Nom de famille: <% out.print(customerbean.getBeanLname());%>

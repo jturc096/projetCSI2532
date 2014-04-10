@@ -16,6 +16,8 @@
     <servlet-mapping>
         <servlet-name>FrontController</servlet-name>
         <url-pattern>/loginC</url-pattern>
+        <url-pattern>/account_summary</url-pattern>
+        <url-pattern>/account_activity</url-pattern>
         <url-pattern>/loginE</url-pattern>
         <url-pattern>/employee_data</url-pattern>
         <url-pattern>/branche_data</url-pattern>
