@@ -220,4 +220,17 @@ public class CustomerBean extends BeanBase {
         return retour;
     }
     
+    public ArrayList listOfAccount(){
+        ArrayList al = new ArrayList();
+        ArrayList ca = getBeanCheckingAccountList();
+        for(int i = 0; i < ca.size(); i++){
+            al.add(((AccountBean)ca.get(i)).getBeanId());
+        }
+        ArrayList sa = getBeanSavingAccountList();
+        for(int i = 0; i < sa.size(); i++){
+            al.add(((AccountBean)ca.get(i)).getBeanId());
+        }
+        return al;
+    }
+    
 }

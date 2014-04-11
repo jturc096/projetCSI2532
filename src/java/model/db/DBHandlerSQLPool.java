@@ -134,6 +134,8 @@ public class DBHandlerSQLPool extends HttpServlet{
                     cb.setbeanEmail(rs.getString("email"));
                     cb.setbeanReachable(rs.getString("reachable"));
                     cb.setbeanUsername(rs.getString("usr"));
+                    cb.setBeanCheckingAccountList(getCheckingAccount(id));
+                    cb.setBeanSavingAccountList(getSavingsAccount(id));
                 }    
                 } catch (SQLException e) { 
                     System.out.println(e);
@@ -630,4 +632,52 @@ public class DBHandlerSQLPool extends HttpServlet{
             }
         return aal;
     }
+    
+    public Boolean insertPayment(int id, String dest, String date, double amount) throws SQLException{
+        Connection conn = getConnection();
+        PreparedStatement stmt1 = null;
+        PreparedStatement stmt2 = null;
+        PreparedStatement stmt3 = null;
+        ResultSet rs = null;
+        Boolean retour = false;
+        if(conn != null){
+        try {            
+            String query = "INSERT INTO bill_payment(bpdat, amount, payee) "+
+                    "VALUES ('"+date+"',"+amount+",'"+dest+"')"+
+                    "RETURNING bpid;";
+            stmt1 = conn.prepareStatement(query);   
+            rs  = stmt1.executeQuery();
+            rs.next();
+            int bpid = rs.getInt(1);
+            String query2 = "INSERT INTO makes(account_number, bpid) "+ 
+                    "VALUES ("+id+","+bpid+");";
+            stmt1.close();
+            stmt2 = conn.prepareStatement(query2);
+            stmt2.executeUpdate();
+            String query3 = "UPDATE account SET amount = amount - "+ amount +" WHERE account_number = "+id+";";
+            stmt2.close();
+            stmt3 = conn.prepareStatement(query3);   
+            stmt3.executeUpdate();
+            retour = true;
+        } catch (SQLException e) { 
+            System.out.println(e);
+        }finally{
+                try {
+                        if(rs != null){
+                            rs.close();
+                        }
+                        if(stmt3 != null){
+                            stmt3.close();
+                        }
+                        if(conn != null){
+                            conn.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        return retour;
+    }
+    
+    
 }

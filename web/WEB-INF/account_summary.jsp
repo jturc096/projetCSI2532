@@ -27,7 +27,10 @@
                         <c:param name="cID" value="${customerbean.beanId}"/> 
                     </c:url>  
                 ">Account Activity</a>
-            <a href="#">Payments</a>
+            <a href="<c:url value="customer_payment">   
+                        <c:param name="cID" value="${customerbean.beanId}"/> 
+                    </c:url>  
+                ">Payments</a>
             <a href="#">Transfers</a>
             <a href="index.jsp">Logout</a>
         </div>

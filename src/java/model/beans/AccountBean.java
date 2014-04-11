@@ -87,7 +87,24 @@ public class AccountBean extends BeanBase {
     public void fillAccountActivity() throws SQLException{
         DBHandlerSQLPool d = new DBHandlerSQLPool();
         setBeanActivityList(d.getAccountActivity(beanId));
-    } 
+    }
+    
+    public String makePayment(double amount, String dest, String date) throws SQLException{
+        DBHandlerSQLPool d = new DBHandlerSQLPool();
+        String retour = "";
+        if(amount <= this.getBeanAmount()){
+            if(d.insertPayment(beanId, dest, date, amount)){
+                retour = "Payment avec Succès";
+            }
+            else{
+                retour = "Payment non fonctionner";
+            }
+        }else{
+            retour = "Manque de fonds";
+        }
+        
+        return retour;
+    }
     
     @Override
     public String toString(){

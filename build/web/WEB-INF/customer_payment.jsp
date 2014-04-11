@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Payments</title>
     </head>
     <body>
         <jsp:useBean id="customerbean" class="model.beans.CustomerBean" scope="request"/>
@@ -48,35 +48,22 @@
 
         
         
-        <%-- This is how iterate over a java bean in JSP - This is in fact is JSTL 
-            You haven't learned that - but just take it as it is right now.. 
-            
-            Note that you have to include the <%@ taglib .. above .. 
-        --%>
-        
+        <jsp:useBean id="accountbean" class="model.beans.AccountBean" scope="request"/>
         <div>
-            
-            <h1>Home</h1>
-            <h3><%out.print(request.getAttribute("msg").toString());%></h3>
-            <form action="updateC" name="jsp_update_C" method="get">
+            <h1>Payments</h1>
+            <form action="customer_payment" name="jsp_account_id" method="get">
                 <input type="hidden" value="${customerbean.beanId}" name="cID">
-                Prenom : <% out.print(customerbean.getBeanFname());%>
+                # du Compte : <input type="text" name="jsp_accountid_txt">
+                Destinataire : <input type="text" name="jsp_destinataire_txt">
                 <br>
-                Nom de famille: <% out.print(customerbean.getBeanLname());%>
+                Montant : <input type="text" name="jsp_montant_txt">
+                Date du transfert : <input type="text" name="jsp_date_txt">
                 <br>
-                Ville: <input type="text" name="jsp_cityC_txt" value="<% out.print(customerbean.getBeanCity());%>">
-                <br>
-                Adresse: <input type="text" name="jsp_adresseC_txt" value="<% out.print(customerbean.getbeanAddr());%>">
-                <br>
-                Téléphone: <input type="text" name="jsp_phoneC_txt" value="<% out.print(customerbean.getbeanPhone());%>">
-                <br>
-                Email: <input type="text" name="jsp_emailC_txt" value="<% out.print(customerbean.getbeanEmail());%>">
-                <br>
-                Reachable: <input type="text" name="jsp_reachableC_txt" value="<% out.print(customerbean.getbeanReachable());%>">
-                <br>
-            <input type="submit" value="Update" name="jsp_updateC_btm">
+                <input type="submit" value="Faire Payment" name="jsp_activity_btm">
             </form>
         </div>
+                <br>
+        <h3><%out.print(request.getAttribute("msg").toString());%></h3>
 
         
         <%-- As a designer, don't use any argument not included in the bean! It is the 
@@ -88,3 +75,4 @@
     
     </body>
 </html>
+

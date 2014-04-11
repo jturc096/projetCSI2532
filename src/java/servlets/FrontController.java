@@ -96,7 +96,6 @@ public class FrontController extends HttpServlet {
             if(id>0){
                 CustomerBean cb = new CustomerBean(id);
                 cb.fillCustomerBean();
-                cb.fillAccounts();
                 request.setAttribute("customerbean", cb);
                 directedURL = "WEB-INF/account_summary.jsp";
             }else{
@@ -123,7 +122,46 @@ public class FrontController extends HttpServlet {
             }
             
         }
-        
+        else if(urlPath.equals("/customer_payment")) {
+            db = new DBHandlerSQLPool();
+            int id = Integer.parseInt(request.getParameter("cID"));
+            if(id>0){
+                CustomerBean cb = new CustomerBean(id);
+                cb.fillCustomerBean();
+                request.setAttribute("customerbean", cb);
+                directedURL = "WEB-INF/customer_payment.jsp";
+                if(request.getParameter("jsp_accountid_txt")== null){
+                    request.setAttribute("msg", "");
+                }else{
+                    String msg = "Mauvais numéro de compte";
+                    int aid = Integer.parseInt(request.getParameter("jsp_accountid_txt"));
+                    for(int i = 0; i < cb.getBeanCheckingAccountList().size();i++){
+                        AccountBean ab = (AccountBean)cb.getBeanCheckingAccountList().get(i);
+                        if(ab.getBeanId() == aid){
+                            double montant = Double.parseDouble(request.getParameter("jsp_montant_txt"));
+                            String dest = request.getParameter("jsp_destinataire_txt");
+                            String date = request.getParameter("jsp_date_txt");
+                            String result = ab.makePayment(montant, dest, date);
+                            msg = result;
+                        }
+                    }
+                    for(int i = 0; i < cb.getBeanSavingAccountList().size();i++){
+                        AccountBean ab = (AccountBean)cb.getBeanSavingAccountList().get(i);
+                        if(ab.getBeanId() == aid){
+                            double montant = Double.parseDouble(request.getParameter("jsp_montant_txt"));
+                            String dest = request.getParameter("jsp_destinataire_txt");
+                            String date = request.getParameter("jsp_date_txt");
+                            String result = ab.makePayment(montant, dest, date);
+                            msg = result;
+                        }
+                    }
+                    request.setAttribute("msg", msg);
+                }
+            }else{
+                directedURL = "index.jsp";
+            }
+            
+        }
         
         else if(urlPath.equals("/loginE")) {
             db = new DBHandlerSQLPool();
