@@ -83,8 +83,12 @@ public class AccountSupervisorBean {
         
         // MUST CHANGE GET INFO CUST TO SOMETHING FOR THIS CLASS IN THE CLASS BDHANDLERSQLPOOL
         AccountSupervisorBean as = d.fillInfoAccountSupervisor(beanEmployeeId); // HERE!!!
-            setBeanEmployeeId(beanEmployeeId); 
-            setBeanCustomerId(as.getBeanCustomerId());
-            setBeanAccount_number(as.getBeanAccount_number());
+        setBeanEmployeeId(beanEmployeeId); 
+        setBeanCustomerId(as.getBeanCustomerId());
+        setBeanAccount_number(as.getBeanAccount_number());
+    }
+    
+     public String toString(){
+        return " Account Number : " + getBeanAccount_number() + " Employee ID : " + getBeanEmployeeId() + " Customer ID : " + getBeanCustomerId();
     }
 }

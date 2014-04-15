@@ -60,7 +60,7 @@
             Note that you have to include the <%@ taglib .. above .. 
         --%>
         <div>
-        <h1>Employee Information</h1>
+        <h2>Employee Information</h2>
         <h3><%out.print(request.getAttribute("message").toString());%></h3>
         <form action="updateE" name="jsp_update_E" method="get">
         <input type="hidden" name="jsp_eid_hid" value="<% out.print(employeebean.getBeanId());%>">

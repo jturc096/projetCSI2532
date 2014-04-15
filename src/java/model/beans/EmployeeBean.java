@@ -26,6 +26,10 @@ public class EmployeeBean extends BeanBase {
     private String beanUsername;
     private String beanPassword;
     
+    // Variable pour les accounts que le employee supervise
+    
+    private ArrayList beanAccountSupervisorList;
+    
     public EmployeeBean() {
         beanId = 0;
         beanUsername = "";
@@ -34,14 +38,19 @@ public class EmployeeBean extends BeanBase {
         beanLname = "";
         beanPhone = "";
         beanStartDate = "";
+        beanAccountSupervisorList = new ArrayList();
     }
     
     public EmployeeBean(int beanCid) {
         this.beanId = beanCid;
+        beanAccountSupervisorList = new ArrayList();
+
     }
     
     public EmployeeBean(String beanUsername) {
         this.beanUsername = beanUsername;
+        beanAccountSupervisorList = new ArrayList();
+
     }
     
     public EmployeeBean(EmployeeBean b) { 
@@ -52,6 +61,15 @@ public class EmployeeBean extends BeanBase {
         this.beanLname = b.beanLname;
         this.beanPhone = b.beanPhone;
         this.beanStartDate = b.beanStartDate;
+        beanAccountSupervisorList = b.beanAccountSupervisorList;
+    }
+    
+    public ArrayList getBeanAccountSupervisorList() {
+        return beanAccountSupervisorList;
+    }
+    
+    public void setBeanAccountSupervisorList(ArrayList beanAccountSupervisorList) {
+        this.beanAccountSupervisorList = beanAccountSupervisorList;
     }
 
     public int getBeanId() {
@@ -123,6 +141,7 @@ public class EmployeeBean extends BeanBase {
         setbeanStartDate(eb.getbeanStartDate());
         setbeanUsername(eb.getBeanUsername());
         setBeanPassword(eb.getBeanPassword());
+        setBeanAccountSupervisorList(eb.getBeanAccountSupervisorList());
     }
     
     
@@ -133,5 +152,21 @@ public class EmployeeBean extends BeanBase {
             return true;
         }
         return false;
+    }  
+    
+    
+     public void fillAccounts() throws SQLException{
+        DBHandlerSQLPool d = new DBHandlerSQLPool();
+        setBeanAccountSupervisorList(d.getAccountSupervisorData(beanId));
     }
+     
+     
+     public String showAccountSupervisor(){
+        String retour = new String();
+        ArrayList al = getBeanAccountSupervisorList();
+        for(int i = 0;i<al.size();i++){
+            retour += al.get(i).toString() + "<br>";
+        }
+        return retour;
+     } 
 }

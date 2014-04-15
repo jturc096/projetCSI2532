@@ -191,11 +191,6 @@ public class DBHandlerSQLPool extends HttpServlet{
         return retour;
     }
     
-    
-    // WORKING HERE FOR THE UPDATE EMPLOYEE
-    
-    
-    
     public boolean updateEmployee(EmployeeBean eb) throws SQLException { 
         Connection conn = getConnection();
         Boolean retour = false;
@@ -230,17 +225,7 @@ public class DBHandlerSQLPool extends HttpServlet{
         }
         return retour;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     public int verifyLoginEmployee(String usr, String pwd) throws SQLException { 
         Connection conn = getConnection();
         PreparedStatement stmt = null;
@@ -630,4 +615,63 @@ public class DBHandlerSQLPool extends HttpServlet{
             }
         return aal;
     }
+    
+    
+    // WORKING HERE WITH ACCOUNT SUPERVISOR DATA WITH MORE THAN ONE ACCOUNT
+    
+    
+    
+    
+    public ArrayList getAccountSupervisorData(int id) throws SQLException{
+        Connection conn = getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        ArrayList list = new ArrayList();
+        if(conn != null){
+        try {
+            
+            String query = "SELECT * FROM account_supervisor WHERE eid = '" +id+"'";
+            stmt = conn.prepareStatement(query);   
+            rs  = stmt.executeQuery(); 
+            while (rs.next()) {
+                AccountSupervisorBean asb = new AccountSupervisorBean();
+                asb.setBeanAccount_number(rs.getInt("account_number"));
+                asb.setBeanEmployeeId(rs.getInt("eid"));
+                asb.setBeanCustomerId(rs.getInt("cid"));
+                list.add(asb);
+            }  
+        } catch (SQLException e) { 
+            System.out.println(e);
+        }finally{
+                try {
+                        if(rs != null){
+                            rs.close();
+                        }
+                        if(stmt != null){
+                            stmt.close();
+                        }
+                        if(conn != null){
+                            conn.close();
+                        }
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        return list;
+    }
+    
+    
+    
+    // WORKING SPACE!!!!!
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

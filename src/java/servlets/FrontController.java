@@ -175,17 +175,34 @@ public class FrontController extends HttpServlet {
             }
         }
         
-          else if (urlPath.equals("/accountSupervisor")) {
+//          else if (urlPath.equals("/accountSupervisor")) {
+//            db = new DBHandlerSQLPool();
+//            String tempEmployeeId = request.getParameter("jsp_employeeId_txt");
+//            int employeeId = Integer.parseInt(tempEmployeeId);
+//            int id = db.getInfoAccountSupervisor(employeeId);
+//            if(id>0){
+//                AccountSupervisorBean asb = new AccountSupervisorBean(id);
+//                asb.fillAccountSupervisorBean();
+//
+//                request.setAttribute("accountsupervisorbean", asb);
+//
+//                directedURL = "WEB-INF/accountSupervisorData.jsp";
+//            }else{
+//                directedURL = "index.jsp";
+//            }
+//        }
+        
+        
+        // NEW ACCOUNT SUPERVISOR ELSE IF IN FRONT CONTROLLER
+        
+        else if(urlPath.equals("/accountSupervisor")) {
             db = new DBHandlerSQLPool();
-            String tempEmployeeId = request.getParameter("jsp_employeeId_txt");
-            int employeeId = Integer.parseInt(tempEmployeeId);
-            int id = db.getInfoAccountSupervisor(employeeId);
+            int id = Integer.parseInt(request.getParameter("jsp_employeeId_txt")); // must chage cID
             if(id>0){
-                AccountSupervisorBean asb = new AccountSupervisorBean(id);
-                asb.fillAccountSupervisorBean();
-
-                request.setAttribute("accountsupervisorbean", asb);
-
+                EmployeeBean eb = new EmployeeBean(id);
+                eb.fillEmployeeBean();
+                eb.fillAccounts();
+                request.setAttribute("employeebean", eb);
                 directedURL = "WEB-INF/accountSupervisorData.jsp";
             }else{
                 directedURL = "index.jsp";

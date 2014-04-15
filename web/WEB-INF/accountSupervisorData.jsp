@@ -5,6 +5,8 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -26,7 +28,7 @@
         
         
         <form action="branche_data" name="jsp_branche_data_E" method="get">
-            Enter the Branche Name to view information on that branche : <input type="text" name="jsp_brancheName_txt">
+            Enter the Branch Name to view information on that branch : <input type="text" name="jsp_brancheName_txt">
             <input type="submit" value="Branche Data" name="jsp_branche_data_btm">
         </form>
         
@@ -39,19 +41,53 @@
         
         <jsp:useBean id="accountsupervisorbean" class="model.beans.AccountSupervisorBean" scope="request"/>
         
-        <h2>Here are the accounts that you supervise</h2>
+<!--        <h2>Here are the accounts that you supervise</h2>
         <p>
             Employee ID : <% out.print(accountsupervisorbean.getBeanEmployeeId());%>
             <br>
             Account ID : <% out.print(accountsupervisorbean.getBeanAccount_number());%>
             <br>
             Customer ID: <% out.print(accountsupervisorbean.getBeanCustomerId());%>
-         </p> 
+         </p> -->
+         
+         
+         
+         
+
+         <div>
+            <h3>Here are the accounts you supervise</h3>
+            <p>
+                <c:choose>
+                    <c:when test="${employeebean.beanAccountSupervisorList.size()>0}">
+                        <table>
+                            <c:forEach items="${employeebean.beanAccountSupervisorList}" var="releaseData">
+                            <tr>
+                                <td>${releaseData.toString()}</td>
+                            </tr>
+                            </c:forEach>
+                        </table>
+                    </c:when>
+                    
+                    <c:otherwise>
+                        You do not supervise any accounts
+                    </c:otherwise>
+                </c:choose>
+            </p>
+        </div>
+         
+         
+         
+         
+         
+         
+         
+         
+         
+         
          
 
          
          
-<!--         WORKING ON THE FIRST STEP TO VIEWING CUSTOMER DATA FROM EMPLOYEE POINT OF VIEW-->
         <form action="customerDataE" name="jsp_customer_data_E" method="get">
             If you wish to view information on a certain customer,
              insert the Customer ID here : <input type="text" name="jsp_customerId_txt">
