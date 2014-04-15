@@ -295,7 +295,6 @@ public class FrontController extends HttpServlet {
         
         
         
-        
         // WORKING HERE FOR THE UPDATE OF EMPLOYEE INFORMATION
         
         
@@ -326,6 +325,48 @@ public class FrontController extends HttpServlet {
             directedURL = "WEB-INF/home_employee.jsp";
             request.setAttribute("employeebean", eb);
             request.setAttribute("message", message);
+        }
+
+
+      else if(urlPath.equals("/transf")) {
+            int id = Integer.parseInt(request.getParameter("cID"));
+            if(id>0){
+                CustomerBean cb = new CustomerBean(id);
+                cb.fillCustomerBean();
+                request.setAttribute("customerbean", cb);
+                
+                directedURL = "WEB-INF/transfert.jsp";
+                if(request.getParameter("jsp_accountno1_txt")!= null
+                        && request.getParameter("jsp_accountno2_txt")!= null){
+            DBHandlerSQLPool db = new DBHandlerSQLPool();
+            
+            
+            String acc1 = request.getParameter("jsp_accountno1_txt");
+            String acc2 = request.getParameter("jsp_accountno2_txt");
+            String amount = request.getParameter("jsp_amount_txt");
+            int id1 = Integer.parseInt(acc1);
+            int id2 = Integer.parseInt(acc2);
+            double am = Double.parseDouble(amount);
+            AccountBean eb = new AccountBean(id1,id2,am);
+            boolean suc = eb.transfertAccount();
+            String message = "";
+            if(suc){
+              message="Update Successful";
+                
+            }else{
+                message="Update Failed";
+            }
+            
+            request.setAttribute("accountbean", eb);
+            request.setAttribute("message", message);
+            //HERE
+            }else{
+                    request.setAttribute("message", "");
+                }
+            }else{
+                directedURL = "index.jsp";
+            }
+            
         }
         
         

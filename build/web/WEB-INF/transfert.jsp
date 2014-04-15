@@ -1,7 +1,7 @@
 <%-- 
-    Document   : jsp_forward
-    Created on : Mar 16, 2014, 2:07:03 PM
-    Author     : ahmed
+    Document   : transfert
+    Created on : Apr 10, 2014, 12:33:21 PM
+    Author     : p1
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -10,9 +10,10 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Payments</title>
+        <title>Transfer</title>
     </head>
     <body>
+        
         <jsp:useBean id="customerbean" class="model.beans.CustomerBean" scope="request"/>
         <div id="nav">
             <a href="<c:url value="loginC">   
@@ -31,14 +32,29 @@
                         <c:param name="cID" value="${customerbean.beanId}"/> 
                     </c:url>  
                 ">Payments</a>
-                 <a href="<c:url value="transf">   
+            <a href="<c:url value="transf">   
                         <c:param name="cID" value="${customerbean.beanId}"/> 
                     </c:url>  
                 ">Transfer</a>
             <a href="index.jsp">Logout</a>
         </div>
         
+        <div>
+            <h1>Transfer</h1>
+            <form action="transf" name="jsp_transf" method="get">
+                <input type="hidden" value="${customerbean.beanId}" name="cID">
+                Your account no (ex. 1): <input type="text" name="jsp_accountno1_txt">
+                Receiver's account no (ex. 2) : <input type="text" name="jsp_accountno2_txt">
+                Amount (ex. 100.50) : <input type="text" name="jsp_amount_txt">
+                
+                <input type="submit" value="Transf" name="jsp_transf_btm">
+            </form>
+        </div>
+        <h3><%out.print(request.getAttribute("message").toString());%></h3>        
         
+        
+    
+    
         <%-- This is how we access the bean  called - forwardbean passed in the request
             Note that the id parameter must be equal to the name of attribute name as 
             defined in the request. 
@@ -47,26 +63,28 @@
             beans has a scope of request, session, application and page .. let's ignore that 
             now. 
         --%>
+        <%--<jsp:useBean id="forwardbean" class="model.beans.ForwardBean" scope="request"/>--%>
+      
         
-
+        <%-- you see the jsp:getProperty .. well, this is how you access the bean - note 
+        that beanId is actually calling getBeanId(). The same can be said about beanMessage--%>
+        
+        <%--<p>We received a forward bean with id = <jsp:getProperty name="forwardbean" property="beanId"/>
+            and message <jsp:getProperty name="forwardbean" property="beanMessage"/></p>
         
         
-        <jsp:useBean id="accountbean" class="model.beans.AccountBean" scope="request"/>
-        <div>
-            <h1>Payments</h1>
-            <form action="customer_payment" name="jsp_account_id" method="get">
-                <input type="hidden" value="${customerbean.beanId}" name="cID">
-                # du Compte : <input type="text" name="jsp_accountid_txt">
-                Destinataire : <input type="text" name="jsp_destinataire_txt">
-                <br>
-                Montant : <input type="text" name="jsp_montant_txt">
-                Date du transfert : <input type="text" name="jsp_date_txt">
-                <br>
-                <input type="submit" value="Faire Payment" name="jsp_activity_btm">
-            </form>
-        </div>
-                <br>
-        <h3><%out.print(request.getAttribute("msg").toString());%></h3>
+        <%-- This is how iterate over a java bean in JSP - This is in fact is JSTL 
+            You haven't learned that - but just take it as it is right now.. 
+            
+            Note that you have to include the <%@ taglib .. above .. 
+        --%>
+        
+        <%--<ul>
+            <c:forEach items="${forwardbean.beanStringList}" var="v">
+                <li>${v}</li>
+            </c:forEach>
+                      
+        </ul> --%>
 
         
         <%-- As a designer, don't use any argument not included in the bean! It is the 
@@ -78,4 +96,3 @@
     
     </body>
 </html>
-

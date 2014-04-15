@@ -24,6 +24,8 @@
         <url-pattern>/branche_data</url-pattern>
         <url-pattern>/accountSupervisor</url-pattern>    
         <url-pattern>/customerDataE</url-pattern>
+        <url-pattern>/transf</url-pattern>
+        <url-pattern>/transfert</url-pattern>
         <url-pattern>/updateC</url-pattern>
         <url-pattern>/updateE</url-pattern>
 

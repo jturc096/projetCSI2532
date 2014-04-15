@@ -5,21 +5,13 @@
  */
 package model.db;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import model.beans.AccountActivityBean;
 import model.beans.AccountBean;
@@ -677,6 +669,69 @@ public class DBHandlerSQLPool extends HttpServlet{
                 }
             }
         return retour;
+    }
+
+    public boolean transferMoney(AccountBean ab) throws SQLException {
+        Connection conn = getConnection();
+        Boolean retour = false;
+        PreparedStatement prest = null;
+        if(conn != null){  
+            try{    
+            
+            String query0 = "SELECT * FROM Account WHERE account_number = "+ab.getBeanId() + ";" ;
+            PreparedStatement stmt = conn.prepareStatement(query0);   
+            ResultSet rs  = stmt.executeQuery();
+            rs.next();
+            if(rs.getDouble("amount") - ab.getAmount() <= 0){
+                return false;
+            }
+                
+                String query1 = "UPDATE Account" + " SET amount= amount - ?" +" WHERE account_number=?;";
+                prest = conn.prepareStatement(query1);
+                prest.setDouble(1,(ab.getAmount()));
+                prest.setInt(2,ab.getBeanId());
+         
+    
+                prest.executeUpdate();
+                retour = true;
+                System.out.println(" No - SQLException");
+            }catch (SQLException s){
+                retour = false;
+            }
+            
+             try {
+                    if(prest != null){
+                    prest.close();
+                    }
+                } catch (Exception e) {
+                }
+            
+             try{    
+                String query2 = "UPDATE Account" + " SET amount= amount + ?" + " WHERE account_number=?;";
+                prest = conn.prepareStatement(query2);
+                prest.setDouble(1, (ab.getAmount()));
+                prest.setInt(2, ab.getBeanTrans());
+         
+    
+                prest.executeUpdate();
+            }catch (SQLException s){
+                retour = false;
+            }
+           
+            finally{
+                try {
+                    if(prest != null){
+                    prest.close();
+                    }
+
+                        conn.close();
+                
+                } catch (Exception e) {
+                }
+            }
+        }
+        return retour;
+    
     }
     
     

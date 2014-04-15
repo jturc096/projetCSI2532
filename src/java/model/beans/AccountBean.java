@@ -22,17 +22,23 @@ public class AccountBean extends BeanBase {
     private double beanAmount;
     private String beanType;
     private ArrayList beanActivityList;
+    private int beanTrans;
+    private double amount;
     
     public AccountBean() {
         beanId = 0;
         beanCid = 0;
         beanAmount = 0.0;
         beanType = "";
+        beanTrans = 0;
+        amount = 0;
         beanActivityList = new ArrayList();
     }
     
     public AccountBean(int beanId) {
         this.beanId = beanId;
+        beanTrans = 0;
+        amount = 0;
         beanActivityList = new ArrayList();
     }
     
@@ -41,7 +47,16 @@ public class AccountBean extends BeanBase {
         this.beanAmount = a.beanAmount;
         this.beanCid = a.beanCid;
         this.beanType = a.beanType;
+        beanTrans = 0;
+        amount = 0;
         beanActivityList = a.beanActivityList;
+    }
+
+        public AccountBean(int id1, int id2, double am) {
+        this.beanId = id1;
+        this.beanTrans = id2;
+        this.amount = am;
+        beanActivityList = new ArrayList();
     }
 
     public int getBeanId() {
@@ -50,6 +65,21 @@ public class AccountBean extends BeanBase {
 
     public void setBeanId(int beanCid) {
         this.beanId = beanCid;
+    }
+       public int getBeanTrans() {
+        return beanTrans;
+    }
+
+    public void setBeanTrans(int beanTrans) {
+        this.beanTrans = beanTrans;
+    }
+    
+       public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
     
     public int getBeanCid() {
@@ -104,6 +134,16 @@ public class AccountBean extends BeanBase {
         }
         
         return retour;
+    }
+
+    
+    public boolean transfertAccount() throws SQLException{
+        DBHandlerSQLPool d = new DBHandlerSQLPool();
+            if(d.transferMoney(this)){
+            fillAccountActivity();
+            return true;
+        }
+        return false;
     }
     
     @Override
